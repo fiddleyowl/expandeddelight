@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "c": {
-      "tag": "c:crops/wheat"
-    },
-    "w": {
-      "item": "minecraft:sugar"
-    }
+    "c": "#c:crops/wheat",
+    "w": "minecraft:sugar"
   },
   "pattern": [
     "cwc"

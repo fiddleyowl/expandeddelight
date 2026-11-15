@@ -6,18 +6,10 @@
   },
   "experience": 1.2,
   "ingredients": [
-    {
-      "tag": "c:foods/raw_bacon"
-    },
-    {
-      "tag": "c:crops/asparagus"
-    },
-    {
-      "tag": "c:crops/onion"
-    },
-    {
-      "tag": "c:foods/cheese"
-    }
+    "#c:foods/raw_bacon",
+    "#c:crops/asparagus",
+    "#c:crops/onion",
+    "#c:foods/cheese"
   ],
   "recipe_book_tab": "meals",
   "result": {

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "c": {
-      "item": "minecraft:cocoa_beans"
-    },
-    "w": {
-      "tag": "c:crops/grain"
-    }
+    "c": "minecraft:cocoa_beans",
+    "w": "#c:crops/grain"
   },
   "pattern": [
     "cwc"

@@ -1,8 +1,7 @@
 package ianm1647.expandeddelight.common.world;
 
-import net.minecraft.world.level.levelgen.placement.*;
-
 import java.util.List;
+import net.minecraft.world.level.levelgen.placement.*;
 
 public class OrePlacement {
     public static List<PlacementModifier> orePlacement(PlacementModifier pCountPlacement, PlacementModifier pHeightRange) {

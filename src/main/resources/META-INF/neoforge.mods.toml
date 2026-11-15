@@ -2,6 +2,7 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
+issueTrackerURL="https://github.com/fiddleyowl/expandeddelight/issues"
 
 [[mods]]
 modId="${mod_id}"
@@ -9,6 +10,8 @@ version="${mod_version}"
 displayName="${mod_name}"
 logoFile="logo.png"
 authors="${mod_authors}"
+credits="Original mod and assets: ianm1647. Farmers Delight adaptations: vectorwing and BuaichiZY. Project template: NeoForged."
+displayURL="https://github.com/fiddleyowl/expandeddelight"
 description='''${mod_description}'''
 
 enumExtensions="META-INF/enumextensions.json"
@@ -33,6 +36,20 @@ config = "expandeddelight.mixins.json"
 [[dependencies.${mod_id}]]
     modId="farmersdelight"
     type="required"
-    versionRange="1.21-1.2.4"
+    versionRange="[1.3.3-fix8,)"
     ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="[29.6.2.31,)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="kubejs"
+    type="optional"
+    versionRange="[26.1.2-8.0.8,)"
+    ordering="AFTER"
     side="BOTH"

@@ -4,11 +4,10 @@ import ianm1647.expandeddelight.ExpandedDelight;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -61,14 +60,14 @@ public class EDBiomeModifiers {
     }
 
     static {
-        SALT_ORE = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "salt_ore"));
+        SALT_ORE = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "salt_ore"));
 
-        CINNAMON_TREE = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "cinnamon_tree"));
+        CINNAMON_TREE = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "cinnamon_tree"));
 
-        WILD_ASPARAGUS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_asparagus"));
-        WILD_SWEET_POTATO = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_sweet_potato"));
-        WILD_CHILI_PEPPER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_chili_pepper"));
-        WILD_PEANUTS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_peanuts"));
-        CRANBERRIES = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "cranberries"));
+        WILD_ASPARAGUS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_asparagus"));
+        WILD_SWEET_POTATO = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_sweet_potato"));
+        WILD_CHILI_PEPPER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_chili_pepper"));
+        WILD_PEANUTS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "wild_peanuts"));
+        CRANBERRIES = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "cranberries"));
     }
 }

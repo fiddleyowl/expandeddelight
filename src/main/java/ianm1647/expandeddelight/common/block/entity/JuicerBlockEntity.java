@@ -5,24 +5,27 @@ import ianm1647.expandeddelight.common.block.JuicerBlock;
 import ianm1647.expandeddelight.common.block.entity.container.JuicerMenu;
 import ianm1647.expandeddelight.common.block.entity.inventory.JuicerItemHandler;
 import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
-import ianm1647.expandeddelight.common.registry.EDDataComponents;
 import ianm1647.expandeddelight.common.registry.EDBlockEntityTypes;
+import ianm1647.expandeddelight.common.registry.EDDataComponents;
 import ianm1647.expandeddelight.common.registry.EDItems;
 import ianm1647.expandeddelight.common.registry.EDRecipeTypes;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component.Serializer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
@@ -34,29 +37,29 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import org.jspecify.annotations.Nullable;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
+import vectorwing.farmersdelight.common.block.entity.inventory.LegacyItemHandlerResourceHandler;
 import vectorwing.farmersdelight.common.item.component.ItemStackWrapper;
 import vectorwing.farmersdelight.common.registry.ModDataComponents;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
-
-import javax.annotation.Nullable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 
 @EventBusSubscriber(modid = "expandeddelight")
 public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider, Nameable, RecipeCraftingHolder {
@@ -65,20 +68,20 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
    public static final int OUTPUT_SLOT = 4;
    public static final int INVENTORY_SIZE = 5;
    private final ItemStackHandler inventory = this.createHandler();
-   private final IItemHandler inputHandler;
-   private final IItemHandler outputHandler;
+   private final ResourceHandler<ItemResource> inputHandler;
+   private final ResourceHandler<ItemResource> outputHandler;
    public int juiceTime;
    private int juiceTimeTotal;
    private ItemStack containerStack;
    private Component customName;
    protected final ContainerData juicerData;
-   private final Object2IntOpenHashMap<ResourceLocation> usedRecipeTracker;
+   private final Object2IntOpenHashMap<ResourceKey<Recipe<?>>> usedRecipeTracker;
    private final RecipeManager.CachedCheck<RecipeWrapper, JuicerRecipe> quickCheck;
 
    public JuicerBlockEntity(BlockPos pos, BlockState state) {
       super(EDBlockEntityTypes.JUICER.get(), pos, state);
-      this.inputHandler = new JuicerItemHandler(this.inventory, Direction.UP);
-      this.outputHandler = new JuicerItemHandler(this.inventory, Direction.DOWN);
+      this.inputHandler = new LegacyItemHandlerResourceHandler(new JuicerItemHandler(this.inventory, Direction.UP), this.inventory::setStackInSlot);
+      this.outputHandler = new LegacyItemHandlerResourceHandler(new JuicerItemHandler(this.inventory, Direction.DOWN), this.inventory::setStackInSlot);
       this.containerStack = ItemStack.EMPTY;
       this.juicerData = this.createIntArray();
       this.usedRecipeTracker = new Object2IntOpenHashMap();
@@ -87,7 +90,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
    @SubscribeEvent
    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-      event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, EDBlockEntityTypes.JUICER.get(), (be, context) -> context == Direction.UP ? be.inputHandler: be.outputHandler);
+      event.registerBlockEntity(Capabilities.Item.BLOCK, EDBlockEntityTypes.JUICER.get(), (be, context) -> context == Direction.UP ? be.inputHandler: be.outputHandler);
    }
 
    public static ItemStack getDrinkFromItem(ItemStack juicerStack) {
@@ -106,69 +109,32 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
       return !juicerStack.is((Item) EDItems.JUICER.get()) ? ItemStack.EMPTY : (juicerStack.getOrDefault(ModDataComponents.CONTAINER.get(), ItemStackWrapper.EMPTY)).getStack();
    }
 
-   public void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
-      super.loadAdditional(compound, registries);
-      this.inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
-      this.juiceTime = compound.getInt("JuiceTime");
-      this.juiceTimeTotal = compound.getInt("JuiceTimeTotal");
-      this.containerStack = ItemStack.parseOptional(registries, compound.getCompound("Container"));
-      if (compound.contains("CustomName", 8)) {
-         this.customName = Serializer.fromJson(compound.getString("CustomName"), registries);
-      }
+	@Override
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		input.readChild("Inventory", inventory);
+		juiceTime = input.getIntOr("JuiceTime", 0);
+		juiceTimeTotal = input.getIntOr("JuiceTimeTotal", 0);
+		containerStack = input.read("Container", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
+		customName = input.read("CustomName", ComponentSerialization.CODEC).orElse(null);
+		usedRecipeTracker.clear();
+		ValueInput recipes = input.childOrEmpty("RecipesUsed");
+		for (String key : recipes.keySet()) {
+			usedRecipeTracker.put(ResourceKey.create(Registries.RECIPE, Identifier.parse(key)), recipes.getIntOr(key, 0));
+		}
+	}
 
-      CompoundTag compoundRecipes = compound.getCompound("RecipesUsed");
-      Iterator var4 = compoundRecipes.getAllKeys().iterator();
-
-      while(var4.hasNext()) {
-         String key = (String)var4.next();
-         this.usedRecipeTracker.put(ResourceLocation.parse(key), compoundRecipes.getInt(key));
-      }
-
-   }
-
-   public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
-      super.saveAdditional(compound, registries);
-      compound.putInt("JuiceTime", this.juiceTime);
-      compound.putInt("JuiceTimeTotal", this.juiceTime);
-      compound.put("Container", this.containerStack.saveOptional(registries));
-      if (this.customName != null) {
-         compound.putString("CustomName", Serializer.toJson(this.customName, registries));
-      }
-
-      compound.put("Inventory", this.inventory.serializeNBT(registries));
-      CompoundTag compoundRecipes = new CompoundTag();
-      this.usedRecipeTracker.forEach((recipeId, craftedAmount) -> {
-         compoundRecipes.putInt(recipeId.toString(), craftedAmount);
-      });
-      compound.put("RecipesUsed", compoundRecipes);
-   }
-
-   private CompoundTag writeItems(CompoundTag compound, HolderLookup.Provider registries) {
-      super.saveAdditional(compound, registries);
-      compound.put("Container", this.containerStack.saveOptional(registries));
-      compound.put("Inventory", this.inventory.serializeNBT(registries));
-      return compound;
-   }
-
-   public CompoundTag writeDrink(CompoundTag compound, HolderLookup.Provider registries) {
-      if (this.getDrink().isEmpty()) {
-         return compound;
-      } else {
-         ItemStackHandler drops = new ItemStackHandler(5);
-
-         for(int i = 0; i < 5; ++i) {
-            drops.setStackInSlot(i, i == 2 ? this.inventory.getStackInSlot(i) : ItemStack.EMPTY);
-         }
-
-         if (this.customName != null) {
-            compound.putString("CustomName", Serializer.toJson(this.customName, registries));
-         }
-
-         compound.put("Container", this.containerStack.save(registries));
-         compound.put("Inventory", drops.serializeNBT(registries));
-         return compound;
-      }
-   }
+	@Override
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		output.putInt("JuiceTime", juiceTime);
+		output.putInt("JuiceTimeTotal", juiceTimeTotal);
+		output.store("Container", ItemStack.OPTIONAL_CODEC, containerStack);
+		output.storeNullable("CustomName", ComponentSerialization.CODEC, customName);
+		output.putChild("Inventory", inventory);
+		ValueOutput recipes = output.child("RecipesUsed");
+		usedRecipeTracker.forEach((recipeId, craftedAmount) -> recipes.putInt(recipeId.identifier().toString(), craftedAmount));
+	}
 
    public ItemStack getAsItem() {
       ItemStack stack = new ItemStack(EDItems.JUICER.get());
@@ -213,13 +179,13 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
       if (this.level == null) {
          return Optional.empty();
       } else {
-         return this.hasInput() ? this.quickCheck.getRecipeFor(inventoryWrapper, this.level) : Optional.empty();
+         return this.hasInput() ? this.quickCheck.getRecipeFor(inventoryWrapper, (ServerLevel) this.level) : Optional.empty();
       }
    }
 
    public ItemStack getContainer() {
       ItemStack mealStack = this.getDrink();
-      return !mealStack.isEmpty() && !this.containerStack.isEmpty() ? this.containerStack : mealStack.getCraftingRemainingItem();
+      return !mealStack.isEmpty() && !this.containerStack.isEmpty() ? this.containerStack : remainder(mealStack);
    }
 
    private boolean hasInput() {
@@ -234,7 +200,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
    protected boolean canJuice(JuicerRecipe recipe) {
       if (this.hasInput()) {
-         ItemStack resultStack = recipe.assemble(new RecipeWrapper(this.inventory), this.level.registryAccess());
+         ItemStack resultStack = recipe.assemble(new RecipeWrapper(this.inventory));
          if (resultStack.isEmpty()) {
             return false;
          } else {
@@ -265,7 +231,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
          } else {
             this.juiceTime = 0;
             this.containerStack = (recipe.value()).getOutputContainer();
-            ItemStack resultStack = (recipe.value()).assemble(new RecipeWrapper(this.inventory), this.level.registryAccess());
+            ItemStack resultStack = (recipe.value()).assemble(new RecipeWrapper(this.inventory));
             ItemStack storedDrinkStack = this.inventory.getStackInSlot(2);
             if (storedDrinkStack.isEmpty()) {
                this.inventory.setStackInSlot(2, resultStack.copy());
@@ -277,8 +243,8 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
             for(int i = 0; i < 2; ++i) {
                ItemStack slotStack = this.inventory.getStackInSlot(i);
-               if (slotStack.hasCraftingRemainingItem()) {
-                  this.ejectIngredientRemainder(slotStack.getCraftingRemainingItem());
+               if (!remainder(slotStack).isEmpty()) {
+                  this.ejectIngredientRemainder(remainder(slotStack));
                }
                if (!slotStack.isEmpty()) {
                   slotStack.shrink(1);
@@ -300,7 +266,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
    public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
       if (recipe != null) {
-         ResourceLocation recipeID = recipe.id();
+         ResourceKey<Recipe<?>> recipeID = recipe.id();
          this.usedRecipeTracker.addTo(recipeID, 1);
       }
 
@@ -313,7 +279,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 
    public void awardUsedRecipes(Player player, List<ItemStack> items) {
       List<RecipeHolder<?>> usedRecipes = this.getUsedRecipesAndPopExperience(player.level(), player.position());
-      player.awardRecipes(usedRecipes);
+      if (player instanceof ServerPlayer serverPlayer) serverPlayer.awardRecipes(usedRecipes);
       this.usedRecipeTracker.clear();
    }
 
@@ -322,8 +288,8 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
       ObjectIterator var4 = this.usedRecipeTracker.object2IntEntrySet().iterator();
 
       while(var4.hasNext()) {
-         Object2IntMap.Entry<ResourceLocation> entry = (Object2IntMap.Entry)var4.next();
-         level.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
+         Object2IntMap.Entry<ResourceKey<Recipe<?>>> entry = (Object2IntMap.Entry)var4.next();
+         ((ServerLevel) level).recipeAccess().byKey(entry.getKey()).ifPresent((recipe) -> {
             list.add(recipe);
             splitAndSpawnExperience((ServerLevel)level, pos, entry.getIntValue(), ((JuicerRecipe)recipe.value()).getExperience());
          });
@@ -404,7 +370,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
    }
 
    private boolean doesDrinkHaveContainer(ItemStack stack) {
-      return !this.containerStack.isEmpty() || stack.hasCraftingRemainingItem();
+      return !this.containerStack.isEmpty() || !remainder(stack).isEmpty();
    }
 
    public boolean isContainerValid(ItemStack containerItem) {
@@ -432,15 +398,21 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
       return new JuicerMenu(id, player, this, this.juicerData);
    }
 
+   @Override
+   public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+      if (this.level instanceof ServerLevel serverLevel) {
+         net.minecraft.world.Containers.dropContents(serverLevel, pos, getDroppableInventory());
+         getUsedRecipesAndPopExperience(serverLevel, Vec3.atCenterOf(pos));
+         serverLevel.updateNeighbourForOutputSignal(pos, state.getBlock());
+      }
+      super.preRemoveSideEffects(pos, state);
+   }
+
    public void setRemoved() {
       super.setRemoved();
    }
 
-   public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-      return this.writeItems(new CompoundTag(), registries);
-   }
-
-   protected void applyImplicitComponents(BlockEntity.DataComponentInput componentInput) {
+   protected void applyImplicitComponents(net.minecraft.core.component.DataComponentGetter componentInput) {
       super.applyImplicitComponents(componentInput);
       this.customName = componentInput.get(DataComponents.CUSTOM_NAME);
       this.getInventory().setStackInSlot(2, componentInput.getOrDefault(EDDataComponents.DRINK, ItemStackWrapper.EMPTY).getStack());
@@ -454,14 +426,20 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
       components.set(ModDataComponents.CONTAINER, new ItemStackWrapper(this.getContainer()));
    }
 
-   public void removeComponentsFromTag(CompoundTag tag) {
-      tag.remove("CustomName");
-      tag.remove("drink");
-      tag.remove("container");
+   public void removeComponentsFromTag(ValueOutput tag) {
+      tag.discard("CustomName");
+      tag.discard("drink");
+      tag.discard("container");
+   }
+
+   private static ItemStack remainder(ItemStack stack) {
+      if (stack.isEmpty()) return ItemStack.EMPTY;
+      var remainder = stack.getItem().getCraftingRemainder(stack);
+      return remainder == null ? ItemStack.EMPTY : remainder.create();
    }
 
    private ItemStackHandler createHandler() {
-      return new ItemStackHandler(9) {
+      return new ItemStackHandler(INVENTORY_SIZE) {
          protected void onContentsChanged(int slot) {
             JuicerBlockEntity.this.inventoryChanged();
          }

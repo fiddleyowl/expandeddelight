@@ -2,9 +2,8 @@ package ianm1647.expandeddelight.common.world.tree;
 
 import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.world.EDConfiguredFeatures;
-import net.minecraft.world.level.block.grower.TreeGrower;
-
 import java.util.Optional;
+import net.minecraft.world.level.block.grower.TreeGrower;
 
 public class EDTreeGrowers {
 

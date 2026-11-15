@@ -1,0 +1,38 @@
+Expanded Delight - Minecraft 26.1.2 / NeoForge port
+
+Original mod, code, and assets: ianm1647
+Original project: https://github.com/ianm1647/expandeddelight
+Original listing: https://www.curseforge.com/minecraft/mc-mods/expanded-delight
+Upstream branch: 1.21-neo
+Upstream version: 0.1.4 for Minecraft 1.21.1 / NeoForge
+Upstream baseline: ea826400654702587e86c9e94544bfd74f065083
+
+Minecraft 26.1.2 port maintainer: fiddleyowl
+Port repository: https://github.com/fiddleyowl/expandeddelight
+Port branch: 26.1.2-neoforge
+Port version: 0.1.4+mc26.1.2
+
+Port changes include Java 25 and NeoForge 26.1.2 build configuration, block and
+item registration, consumption components, container returns, juicer recipes
+and persistence, recipe book and screen APIs, client recipe synchronization,
+cinnamon boat integration, data-driven villager trades, resource formats,
+world generation data, loot modifiers, and JEI/KubeJS compatibility.
+
+The upstream mod declares MIT licensing in its build properties and mod
+metadata. LICENSE supplies the complete MIT terms and credits ianm1647;
+port modifications are also distributed under MIT. The upstream template's
+separate MIT notice is retained in TEMPLATE_LICENSE.txt.
+
+Farmer's Delight was created by vectorwing. Its Minecraft 26.1.2 port is
+maintained by BuaichiZY. Adapted recipe, recipe book, screen, and tooltip code
+retains their attribution and the full MIT notice in THIRD_PARTY_NOTICES.txt.
+Dependency repository:
+https://github.com/BuaichiZY/FarmersDelight_26_Neo.ver/tree/26.1.2
+
+The Gradle wrapper retains its original copyright and Apache License 2.0
+headers. The complete license is in licenses/Gradle-Apache-2.0.txt.
+
+LICENSE, NOTICE, THIRD_PARTY_NOTICES.txt, TEMPLATE_LICENSE.txt, and the Gradle
+license are included under META-INF/ in runtime and sources jars. Dependencies
+are not bundled. This community port is maintained independently of the
+original author.

@@ -24,3 +24,5 @@ runs
 run-data
 
 repo
+run-gametest
+run-gametest-kubejs

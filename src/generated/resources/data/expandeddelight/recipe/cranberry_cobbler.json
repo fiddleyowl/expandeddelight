@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "minecraft:wheat"
-    },
-    "O": {
-      "item": "farmersdelight:pie_crust"
-    },
-    "a": {
-      "item": "expandeddelight:cranberries"
-    },
-    "e": {
-      "tag": "c:eggs"
-    },
-    "x": {
-      "item": "minecraft:sugar"
-    }
+    "#": "minecraft:wheat",
+    "O": "farmersdelight:pie_crust",
+    "a": "expandeddelight:cranberries",
+    "e": "#c:eggs",
+    "x": "minecraft:sugar"
   },
   "pattern": [
     "#e#",

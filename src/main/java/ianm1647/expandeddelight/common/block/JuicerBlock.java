@@ -3,44 +3,39 @@ package ianm1647.expandeddelight.common.block;
 import com.mojang.serialization.MapCodec;
 import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
 import ianm1647.expandeddelight.common.registry.EDBlockEntityTypes;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jspecify.annotations.Nullable;
 import vectorwing.farmersdelight.common.utility.MathUtils;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
-
 public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     public static final BooleanProperty WATERLOGGED;
     public static final VoxelShape SHAPE_NORTH;
     private static final VoxelShape SHAPE_SOUTH;
@@ -48,13 +43,9 @@ public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     private static final VoxelShape SHAPE_WEST;
     public static final MapCodec<JuicerBlock> CODEC = simpleCodec(JuicerBlock::new);
 
-    public JuicerBlock() {
-        super(Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD));
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
-    }
-
-    public JuicerBlock(BlockBehaviour.Properties properties) {
+    public JuicerBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     @Override
@@ -63,8 +54,8 @@ public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack heldStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
-        if (!level.isClientSide) {
+    public InteractionResult useItemOn(ItemStack heldStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+        if (!level.isClientSide()) {
             BlockEntity tileEntity = level.getBlockEntity(pos);
             if (tileEntity instanceof JuicerBlockEntity juicerBlockEntity) {
                 ItemStack servingStack = juicerBlockEntity.useHeldItemOnDrink(heldStack);
@@ -77,9 +68,9 @@ public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
                     player.openMenu(juicerBlockEntity, pos);
                 }
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -110,36 +101,21 @@ public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(WATERLOGGED, fluid.getType() == Fluids.WATER);
     }
 
-    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            ticks.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
         return state;
     }
 
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        ItemStack stack = super.getCloneItemStack(level, pos, state);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        ItemStack stack = super.getCloneItemStack(level, pos, state, includeData);
         Optional<JuicerBlockEntity> juicer = level.getBlockEntity(pos, EDBlockEntityTypes.JUICER.get());
         if (juicer.isPresent()) {
             stack = juicer.get().getAsItem();
         }
 
         return stack;
-    }
-
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
-            BlockEntity tileEntity = level.getBlockEntity(pos);
-            if (tileEntity instanceof JuicerBlockEntity) {
-                JuicerBlockEntity juicerBlockEntity = (JuicerBlockEntity)tileEntity;
-                Containers.dropContents(level, pos, juicerBlockEntity.getDroppableInventory());
-                juicerBlockEntity.getUsedRecipesAndPopExperience(level, Vec3.atCenterOf(pos));
-                level.updateNeighbourForOutputSignal(pos, this);
-            }
-
-            super.onRemove(state, level, pos, newState, isMoving);
-        }
-
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -175,7 +151,7 @@ public class JuicerBlock extends BaseEntityBlock implements SimpleWaterloggedBlo
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntity) {
-        return level.isClientSide
+        return level.isClientSide()
                 ? createTickerHelper(blockEntity, EDBlockEntityTypes.JUICER.get(), JuicerBlockEntity::animationTick)
                 : createTickerHelper(blockEntity, EDBlockEntityTypes.JUICER.get(), JuicerBlockEntity::juicingTick);
     }

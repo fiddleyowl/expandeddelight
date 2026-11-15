@@ -7,15 +7,9 @@
   "cookingtime": 100,
   "experience": 0.35,
   "ingredients": [
-    {
-      "tag": "c:crops/peanut"
-    },
-    {
-      "tag": "c:crops/peanut"
-    },
-    {
-      "tag": "c:foods/milk"
-    }
+    "#c:crops/peanut",
+    "#c:crops/peanut",
+    "#c:foods/milk"
   ],
   "recipe_book_tab": "misc",
   "result": {

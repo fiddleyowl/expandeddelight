@@ -1,9 +1,7 @@
 {
   "type": "farmersdelight:cutting",
   "ingredients": [
-    {
-      "item": "minecraft:blaze_rod"
-    }
+    "minecraft:blaze_rod"
   ],
   "result": [
     {
@@ -20,7 +18,5 @@
       }
     }
   ],
-  "tool": {
-    "tag": "expandeddelight:crushing_tools"
-  }
+  "tool": "#expandeddelight:crushing_tools"
 }

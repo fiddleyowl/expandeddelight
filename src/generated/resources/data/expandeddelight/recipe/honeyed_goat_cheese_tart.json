@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "O": {
-      "item": "farmersdelight:pie_crust"
-    },
-    "c": {
-      "tag": "c:foods/goat_cheese"
-    },
-    "e": {
-      "tag": "c:eggs"
-    },
-    "h": {
-      "item": "minecraft:honey_bottle"
-    },
-    "m": {
-      "tag": "c:foods/milk"
-    }
+    "O": "farmersdelight:pie_crust",
+    "c": "#c:foods/goat_cheese",
+    "e": "#c:eggs",
+    "h": "minecraft:honey_bottle",
+    "m": "#c:foods/milk"
   },
   "pattern": [
     "ccc",

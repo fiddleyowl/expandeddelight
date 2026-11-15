@@ -1,17 +1,14 @@
 package ianm1647.expandeddelight.integration.jei.category;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import ianm1647.expandeddelight.common.registry.EDBlocks;
 import ianm1647.expandeddelight.common.registry.EDItems;
 import ianm1647.expandeddelight.common.tag.EDTags;
 import ianm1647.expandeddelight.integration.jei.JEIRecipeTypes;
 import ianm1647.expandeddelight.integration.jei.resource.CheeseFermentingDummy;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -21,19 +18,16 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import vectorwing.farmersdelight.common.utility.ClientRenderUtils;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public class CheeseFermentingRecipeCategory implements IRecipeCategory<CheeseFermentingDummy> {
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("expandeddelight", "cheese_fermenting");
+    public static final Identifier UID = Identifier.fromNamespaceAndPath("expandeddelight", "cheese_fermenting");
     private static final int slotSize = 22;
     private final Component title = Component.translatable("expandeddelight.jei.cheese_fermenting", new Object[0]);
     private final IDrawable background;
@@ -45,7 +39,7 @@ public class CheeseFermentingRecipeCategory implements IRecipeCategory<CheeseFer
     private final ItemStack goatCheeseCask;
 
     public CheeseFermentingRecipeCategory(IGuiHelper helper) {
-        ResourceLocation backgroundImage = ResourceLocation.fromNamespaceAndPath("expandeddelight", "textures/gui/jei/fermenting.png");
+        Identifier backgroundImage = Identifier.fromNamespaceAndPath("expandeddelight", "textures/gui/jei/fermenting.png");
         this.background = helper.createDrawable(backgroundImage, 0, 0, 118, 80);
         this.milkCask = new ItemStack(EDBlocks.MILK_CASK.get());
         this.cheeseCask = new ItemStack(EDItems.CHEESE_WHEEL.get(), 2);
@@ -63,7 +57,10 @@ public class CheeseFermentingRecipeCategory implements IRecipeCategory<CheeseFer
         return this.title;
     }
 
-    public IDrawable getBackground() {
+     public int getWidth() { return background.getWidth(); }
+    public int getHeight() { return background.getHeight(); }
+
+   public IDrawable getBackground() {
         return this.background;
     }
 
@@ -73,7 +70,7 @@ public class CheeseFermentingRecipeCategory implements IRecipeCategory<CheeseFer
 
     public void setRecipe(IRecipeLayoutBuilder builder, CheeseFermentingDummy recipe, IFocusGroup focusGroup) {
         List<ItemStack> accelerators = new ArrayList();
-        BuiltInRegistries.BLOCK.getTag(EDTags.MILK_ACTIVATORS).ifPresent((s) -> {
+        BuiltInRegistries.BLOCK.get(EDTags.MILK_ACTIVATORS).ifPresent((s) -> {
             s.forEach((f) -> {
                 accelerators.add(new ItemStack(f.value()));
             });
@@ -84,7 +81,8 @@ public class CheeseFermentingRecipeCategory implements IRecipeCategory<CheeseFer
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 64, 54).addItemStacks(accelerators);
     }
 
-    public void draw(CheeseFermentingDummy recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(CheeseFermentingDummy recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics, 0, 0);
         this.slotIcon.draw(guiGraphics, 63, 53);
     }
 
@@ -98,7 +96,7 @@ public class CheeseFermentingRecipeCategory implements IRecipeCategory<CheeseFer
         }
     }
 
-    private static MutableComponent translateKey(@Nonnull String suffix) {
+    private static MutableComponent translateKey(String suffix) {
         return Component.translatable("expandeddelight.jei.cheese_fermenting" + suffix);
     }
 }

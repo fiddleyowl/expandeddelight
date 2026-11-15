@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.139'
+    id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
 }
 
@@ -13,77 +13,66 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    mavenLocal()
     maven {
-        url = "https://maven.blamejared.com"
-        content {
-            includeGroup "mezz.jei"
-        }
+        url = 'https://www.cursemaven.com'
+        content { includeGroup 'curse.maven' }
     }
-    maven { url = "https://maven.ryanliptak.com/" }
-    maven { url = "https://api.modrinth.com/maven" }
-
-    //KubeJS
-
     maven {
-        // saps.dev Maven (KubeJS and Rhino)
-        url = "https://maven.saps.dev/minecraft"
-        content {
-            includeGroup "dev.latvian.mods"
-            includeGroup "dev.latvian.apps"
-        }
+        url = 'https://maven.blamejared.com'
+        content { includeGroup 'mezz.jei' }
     }
-
     maven {
-        // Shedaniel's maven (Architectury API)
-        url = "https://maven.architectury.dev"
-        content {
-            includeGroup "dev.architectury"
-        }
-    }
-
-    maven {
-        url 'https://jitpack.io'
-        content {
-            includeGroup "com.github.rtyley"
-            includeGroup "com.github.ianm1647"
-        }
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
     }
 }
 
+def withKubeJS = providers.gradleProperty('withKubeJS').map { it.toBoolean() }.getOrElse(false)
+
 dependencies {
-    implementation "maven.modrinth:farmers-delight:$delight_version"
-
-    compileOnly "squeek.appleskin:appleskin-neoforge:$appleskin_version:api"
-    runtimeOnly "squeek.appleskin:appleskin-neoforge:$appleskin_version"
-
+    compileOnly "maven.modrinth:kubejs:$kubejs_version"
+    if (withKubeJS) {
+        runtimeOnly "maven.modrinth:kubejs:$kubejs_version"
+        runtimeOnly "maven.modrinth:rhino:2101.2.8-build.91+Rhino-1.21"
+        runtimeOnly "maven.modrinth:better-advanced-tooltips:2601.1.0-build.11"
+    }
+    implementation "curse.maven:farmers-delight-26-neo-ver-1699768:$farmers_delight_file_id"
     compileOnly "mezz.jei:jei-$minecraft_version-common-api:$jei_version"
     compileOnly "mezz.jei:jei-$minecraft_version-neoforge-api:$jei_version"
-
     runtimeOnly "mezz.jei:jei-$minecraft_version-neoforge:$jei_version"
-
-    api "dev.latvian.mods:kubejs-neoforge:$kubejs_version"
-    implementation "dev.latvian.mods:rhino:$rhino_version"
-    implementation "dev.architectury:architectury-neoforge:$architectury_version"
 }
 
 base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    withSourcesJar()
+}
+
+sourceSets {
+    portTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+configurations {
+    portTestImplementation.extendsFrom implementation
+    portTestCompileOnly.extendsFrom compileOnly
+    portTestRuntimeOnly.extendsFrom runtimeOnly
+}
 
 neoForge {
     version = project.neo_version
 
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
-
     runs {
         client {
             client()
+            if (providers.gradleProperty('portSmoke').isPresent()) {
+                programArguments.addAll '--quickPlaySingleplayer', 'expanded-delight-port-smoke'
+                systemProperty 'expandeddelight.clientSmoke', 'true'
+            }
 
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -96,54 +85,43 @@ neoForge {
 
         gameTestServer {
             type = "gameTestServer"
+            gameDirectory = file(withKubeJS ? "run-gametest-kubejs" : "run-gametest")
+            systemProperty "expandeddelight.testKubeJS", withKubeJS.toString()
+            programArguments.addAll "--tests", "expandeddelight:*", "--report", file(withKubeJS ? "build/port-gametest-kubejs.xml" : "build/port-gametest.xml").absolutePath
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        data {
-            data()
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
-            logLevel = org.slf4j.event.Level.DEBUG
+            logLevel = org.slf4j.event.Level.INFO
         }
     }
 
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.portTest)
         }
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '**/.cache/**'
+}
 
 configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description,
-    ]
-    inputs.properties replaceProperties
-    expand replaceProperties
-    from "src/main/templates"
-    into "build/generated/sources/modMetadata"
+tasks.named('processResources', ProcessResources).configure {
+    def metadata = [minecraft_version_range: minecraft_version_range,
+                    neo_version_range: neo_version_range, loader_version_range: loader_version_range,
+                    mod_id: mod_id, mod_name: mod_name, mod_license: mod_license,
+                    mod_version: mod_version, mod_authors: mod_authors, mod_description: mod_description]
+    inputs.properties metadata
+    filesMatching('META-INF/neoforge.mods.toml') { expand metadata }
 }
-
-sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata
 
 publishing {
     publications {
@@ -167,4 +145,26 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+tasks.withType(Jar).configureEach {
+    from(['LICENSE', 'NOTICE', 'THIRD_PARTY_NOTICES.txt', 'TEMPLATE_LICENSE.txt']) { into 'META-INF' }
+    from('licenses') { into 'META-INF/licenses' }
+}
+
+if (withKubeJS) {
+    def prepareKubeJSTest = tasks.register('prepareKubeJSTest', Copy) {
+        from 'src/portTest/kubejs'
+        into 'run-gametest-kubejs/kubejs'
+    }
+    tasks.named('runGameTestServer') { dependsOn prepareKubeJSTest }
+}
+
+if (providers.gradleProperty('portSmoke').isPresent()) {
+    def prepareClientSmoke = tasks.register('prepareClientSmoke', Copy) {
+        dependsOn 'runGameTestServer'
+        from withKubeJS ? 'run-gametest-kubejs/gametestserver/gametestworld' : 'run-gametest/gametestserver/gametestworld'
+        into 'run/saves/expanded-delight-port-smoke'
+    }
+    tasks.named('runClient') { dependsOn prepareClientSmoke }
 }

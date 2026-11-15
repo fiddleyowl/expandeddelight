@@ -1,9 +1,7 @@
 {
   "type": "farmersdelight:cutting",
   "ingredients": [
-    {
-      "item": "expandeddelight:cinnamon_trapdoor"
-    }
+    "expandeddelight:cinnamon_trapdoor"
   ],
   "result": [
     {
@@ -13,7 +11,5 @@
       }
     }
   ],
-  "tool": {
-    "tag": "minecraft:axes"
-  }
+  "tool": "#minecraft:axes"
 }

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "expandeddelight:wandering_trader/common/sell_asparagus_seeds",
+    "expandeddelight:wandering_trader/common/sell_chili_pepper_seeds",
+    "expandeddelight:wandering_trader/common/sell_sweet_potato",
+    "expandeddelight:wandering_trader/common/sell_peanut"
+  ]
+}

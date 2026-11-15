@@ -2,33 +2,15 @@
   "type": "minecraft:crafting_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    },
-    {
-      "item": "expandeddelight:asparagus"
-    }
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus",
+    "expandeddelight:asparagus"
   ],
   "result": {
     "count": 1,

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:bread"
-    },
-    {
-      "tag": "c:foods/goat_cheese"
-    },
-    {
-      "item": "expandeddelight:cranberries"
-    }
+    "minecraft:bread",
+    "#c:foods/goat_cheese",
+    "expandeddelight:cranberries"
   ],
   "result": {
     "count": 2,

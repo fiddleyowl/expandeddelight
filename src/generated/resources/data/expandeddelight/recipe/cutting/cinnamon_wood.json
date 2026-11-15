@@ -1,9 +1,7 @@
 {
   "type": "farmersdelight:cutting",
   "ingredients": [
-    {
-      "item": "expandeddelight:cinnamon_wood"
-    }
+    "expandeddelight:cinnamon_wood"
   ],
   "result": [
     {
@@ -19,7 +17,5 @@
       }
     }
   ],
-  "tool": {
-    "tag": "minecraft:axes"
-  }
+  "tool": "#minecraft:axes"
 }

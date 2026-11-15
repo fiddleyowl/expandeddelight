@@ -5,13 +5,16 @@ import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
 import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import ianm1647.expandeddelight.common.registry.EDBlocks;
 import ianm1647.expandeddelight.common.registry.EDMenuTypes;
-import com.mojang.datafixers.util.Pair;
 import ianm1647.expandeddelight.common.tag.EDTags;
+import java.util.List;
+import java.util.Objects;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.recipebook.ServerPlaceRecipe;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -22,14 +25,12 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
-import java.util.Objects;
-
-public class JuicerMenu extends RecipeBookMenu<RecipeWrapper, JuicerRecipe> {
+public class JuicerMenu extends RecipeBookMenu {
     private int output = 4;
     private int display = 2;
     private int bottle = 3;
 
-    public static final ResourceLocation EMPTY_CONTAINER_SLOT_BOTTLE = ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "item/empty_container_slot_bottle");
+    public static final Identifier EMPTY_CONTAINER_SLOT_BOTTLE = Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "container/slot/bottle");
     public final JuicerBlockEntity tileEntity;
     public final ItemStackHandler inventory;
     private final ContainerData juicerData;
@@ -37,7 +38,7 @@ public class JuicerMenu extends RecipeBookMenu<RecipeWrapper, JuicerRecipe> {
     protected final Level level;
 
     public JuicerMenu(int windowId, Inventory playerInventory, FriendlyByteBuf data) {
-        this(windowId, playerInventory, getTileEntity(playerInventory, data), new SimpleContainerData(4));
+        this(windowId, playerInventory, getTileEntity(playerInventory, data), new SimpleContainerData(2));
     }
 
     public JuicerMenu(int windowId, Inventory playerInventory, JuicerBlockEntity tileEntity, ContainerData juicerDataIn) {
@@ -61,8 +62,8 @@ public class JuicerMenu extends RecipeBookMenu<RecipeWrapper, JuicerRecipe> {
 
         this.addSlot(new JuicerDrinkSlot(this.inventory, display, 118, 26));
         this.addSlot(new SlotItemHandler(this.inventory, bottle, 86, 55) {
-            public Pair<ResourceLocation, ResourceLocation> m_7543_() {
-                return Pair.of(InventoryMenu.BLOCK_ATLAS, JuicerMenu.EMPTY_CONTAINER_SLOT_BOTTLE);
+            public Identifier getNoItemIcon() {
+                return JuicerMenu.EMPTY_CONTAINER_SLOT_BOTTLE;
             }
         });
         this.addSlot(new JuicerResultSlot(playerInventory.player, tileEntity, this.inventory, output, 118, 55));
@@ -150,7 +151,7 @@ public class JuicerMenu extends RecipeBookMenu<RecipeWrapper, JuicerRecipe> {
         return j != 0 && i != 0 ? i * 40 / j : 0;
     }
 
-    public void fillCraftSlotsStackedContents(StackedContents helper) {
+    public void fillCraftSlotsStackedContents(StackedItemContents helper) {
         for(int i = 0; i < this.inventory.getSlots(); ++i) {
             helper.accountSimpleStack(this.inventory.getStackInSlot(i));
         }
@@ -167,7 +168,7 @@ public class JuicerMenu extends RecipeBookMenu<RecipeWrapper, JuicerRecipe> {
     }
 
     public int getResultSlotIndex() {
-        return 3;
+        return 4;
     }
 
     public int getGridWidth() {
@@ -189,4 +190,28 @@ public class JuicerMenu extends RecipeBookMenu<RecipeWrapper, JuicerRecipe> {
     public boolean shouldMoveToInventory(int slot) {
         return slot < this.getGridWidth() * this.getGridHeight();
     }
+	@Override
+	@SuppressWarnings("unchecked")
+	public PostPlaceAction handlePlacement(boolean useMaxItems, boolean allowDroppingItemsToClear, RecipeHolder<?> recipe,
+			ServerLevel serverLevel, Inventory playerInventory) {
+		List<Slot> inputSlots = this.slots.subList(0, 2);
+		return ServerPlaceRecipe.placeRecipe(new ServerPlaceRecipe.CraftingMenuAccess<JuicerRecipe>() {
+			@Override
+			public void fillCraftSlotsStackedContents(StackedItemContents stackedContents) {
+				JuicerMenu.this.fillCraftSlotsStackedContents(stackedContents);
+			}
+
+			@Override
+			public void clearCraftingContent() {
+				JuicerMenu.this.clearCraftingContent();
+			}
+
+			@Override
+			public boolean recipeMatches(RecipeHolder<JuicerRecipe> cookingRecipe) {
+				return JuicerMenu.this.recipeMatches(cookingRecipe);
+			}
+		}, 1, 2, inputSlots, inputSlots, playerInventory, (RecipeHolder<JuicerRecipe>) recipe,
+				useMaxItems, allowDroppingItemsToClear);
+	}
+
 }

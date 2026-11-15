@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "expandeddelight:chili_pepper"
-    }
+    "expandeddelight:chili_pepper"
   ],
   "result": {
     "count": 1,

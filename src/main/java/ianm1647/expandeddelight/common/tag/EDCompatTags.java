@@ -1,6 +1,6 @@
 package ianm1647.expandeddelight.common.tag;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -37,11 +37,11 @@ public class EDCompatTags {
     }
 
     private static TagKey<Item> externalItemTag(String modId, String path) {
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+        return ItemTags.create(Identifier.fromNamespaceAndPath(modId, path));
     }
 
     private static TagKey<Block> externalBlockTag(String modId, String path) {
-        return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+        return BlockTags.create(Identifier.fromNamespaceAndPath(modId, path));
     }
 
 }

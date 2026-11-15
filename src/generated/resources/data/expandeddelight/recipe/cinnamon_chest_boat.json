@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "chest_boat",
   "ingredients": [
-    {
-      "item": "expandeddelight:cinnamon_boat"
-    },
-    {
-      "tag": "c:chests/wooden"
-    }
+    "expandeddelight:cinnamon_boat",
+    "#c:chests/wooden"
   ],
   "result": {
     "count": 1,

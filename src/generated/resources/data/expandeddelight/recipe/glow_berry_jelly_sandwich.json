@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:bread"
-    },
-    {
-      "item": "expandeddelight:peanut_butter"
-    },
-    {
-      "tag": "c:jams/glow_berry"
-    }
+    "minecraft:bread",
+    "expandeddelight:peanut_butter",
+    "#c:jams/glow_berry"
   ],
   "result": {
     "count": 1,

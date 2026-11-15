@@ -6,10 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
 public class JuicerResultSlot extends SlotItemHandler {
     public final JuicerBlockEntity tileEntity;
     private final Player player;
@@ -25,8 +22,7 @@ public class JuicerResultSlot extends SlotItemHandler {
         return false;
     }
 
-    @Nonnull
-    public ItemStack remove(int amount) {
+        public ItemStack remove(int amount) {
         if (this.hasItem()) {
             this.removeCount += Math.min(amount, this.getItem().getCount());
         }
@@ -45,8 +41,8 @@ public class JuicerResultSlot extends SlotItemHandler {
     }
 
     protected void checkTakeAchievements(ItemStack stack) {
-        stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
-        if (!this.player.level().isClientSide) {
+        stack.onCraftedBy(this.player, this.removeCount);
+        if (!this.player.level().isClientSide()) {
             this.tileEntity.awardUsedRecipes(this.player, this.tileEntity.getDroppableInventory());
         }
 

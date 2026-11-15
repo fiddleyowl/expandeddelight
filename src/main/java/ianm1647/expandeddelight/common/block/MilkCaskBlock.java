@@ -2,6 +2,7 @@ package ianm1647.expandeddelight.common.block;
 
 import ianm1647.expandeddelight.common.registry.EDBlocks;
 import ianm1647.expandeddelight.common.tag.EDTags;
+import java.util.Iterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -14,8 +15,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-
-import java.util.Iterator;
 
 public class MilkCaskBlock extends Block {
     public static IntegerProperty FERMENTING = IntegerProperty.create("cheese_fermenting", 0, 7);
@@ -39,7 +38,7 @@ public class MilkCaskBlock extends Block {
     }
 
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             float chance = 0.0F;
             boolean hasWater = false;
             int maxLight = 0;

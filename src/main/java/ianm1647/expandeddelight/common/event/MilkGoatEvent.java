@@ -32,7 +32,8 @@ public class MilkGoatEvent {
                 player.swing(event.getHand());
                 ItemStack nonNullStack = ItemUtils.createFilledResult(stack, player, item.getDefaultInstance());
                 player.setItemInHand(event.getHand(), nonNullStack);
-                event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
             }
         }
 
@@ -47,7 +48,8 @@ public class MilkGoatEvent {
                 player.swing(event.getHand());
                 ItemStack nonNullStack = ItemUtils.createFilledResult(stack, player, item.getDefaultInstance());
                 player.setItemInHand(event.getHand(), nonNullStack);
-                event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
             }
         }
     }

@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "c:foods/leafy_green"
-    },
-    {
-      "tag": "c:foods/goat_cheese"
-    },
-    {
-      "tag": "c:crops/beetroot"
-    },
-    {
-      "item": "minecraft:bowl"
-    }
+    "#c:foods/leafy_green",
+    "#c:foods/goat_cheese",
+    "#c:crops/beetroot",
+    "minecraft:bowl"
   ],
   "result": {
     "count": 1,

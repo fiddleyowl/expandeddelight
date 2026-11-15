@@ -23,7 +23,7 @@
 			"from": [1, 0, 8],
 			"to": [8, 8, 15],
 			"faces": {
-				"north": {"uv": [0, 0, 0, 0], "texture": "#missing"},
+				"north": {"uv": [0, 0, 0, 0], "texture": "#0"},
 				"east": {"uv": [1, 8, 8, 16], "texture": "#0"},
 				"south": {"uv": [1, 8, 8, 16], "texture": "#1"},
 				"west": {"uv": [8, 8, 15, 16], "texture": "#1"},

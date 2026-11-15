@@ -6,18 +6,10 @@
   },
   "experience": 0.5,
   "ingredients": [
-    {
-      "item": "minecraft:water_bucket"
-    },
-    {
-      "item": "minecraft:apple"
-    },
-    {
-      "item": "expandeddelight:cinnamon"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "minecraft:water_bucket",
+    "minecraft:apple",
+    "expandeddelight:cinnamon",
+    "minecraft:sugar"
   ],
   "recipe_book_tab": "misc",
   "result": {

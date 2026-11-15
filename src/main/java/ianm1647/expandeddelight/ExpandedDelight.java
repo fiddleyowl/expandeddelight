@@ -2,7 +2,7 @@ package ianm1647.expandeddelight;
 
 import ianm1647.expandeddelight.common.registry.*;
 import ianm1647.expandeddelight.common.world.tree.EDTreePlacers;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -27,6 +27,7 @@ public class ExpandedDelight
         EDBlockEntityTypes.TILES.register(modEventBus);
         EDMenuTypes.MENU_TYPES.register(modEventBus);
         EDRecipeTypes.RECIPE_TYPES.register(modEventBus);
+        EDRecipeBookCategories.RECIPE_BOOK_CATEGORIES.register(modEventBus);
         EDRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
         EDTabs.CREATIVE_TABS.register(modEventBus);
         EDEntityTypes.ENTITIES.register(modEventBus);
@@ -35,8 +36,13 @@ public class ExpandedDelight
         NeoForge.EVENT_BUS.register(this);
     }
 
-    public static ResourceLocation loc(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static Identifier loc(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
+    }
+
+    @SubscribeEvent
+    public void syncRecipes(net.neoforged.neoforge.event.OnDatapackSyncEvent event) {
+        event.sendRecipes(EDRecipeTypes.JUICING.get());
     }
 
     @SubscribeEvent

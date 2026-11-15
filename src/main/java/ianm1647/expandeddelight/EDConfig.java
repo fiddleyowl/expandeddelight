@@ -1,14 +1,13 @@
 package ianm1647.expandeddelight;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@EventBusSubscriber(modid = ExpandedDelight.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ExpandedDelight.MODID)
 public class EDConfig {
     public static ModConfigSpec COMMON_CONFIG;
     private static final Map<String, ModConfigSpec.BooleanValue> ITEMS = new HashMap<>();

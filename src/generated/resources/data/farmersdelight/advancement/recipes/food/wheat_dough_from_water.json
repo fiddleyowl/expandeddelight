@@ -1,8 +1,9 @@
 {
   "neoforge:conditions": [
     {
-      "type": "neoforge:item_exists",
-      "item": "farmersdelight:wheat_dough"
+      "type": "neoforge:registered",
+      "registry": "minecraft:item",
+      "value": "farmersdelight:wheat_dough"
     }
   ],
   "parent": "minecraft:recipes/root",

@@ -2,17 +2,15 @@ package ianm1647.expandeddelight.common.item;
 
 import ianm1647.expandeddelight.client.gui.JuicerTooltip;
 import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
-import net.minecraft.util.Mth;
+import java.util.Optional;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
-import java.util.Optional;
-
 public class JuicerItem extends BlockItem {
-    private static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
+    private static final int BAR_COLOR = 0x6666FF;
 
     public JuicerItem(Block block, Item.Properties properties) {
         super(block, properties);

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "wooden_stairs",
   "key": {
-    "i": {
-      "item": "expandeddelight:cinnamon_planks"
-    }
+    "i": "expandeddelight:cinnamon_planks"
   },
   "pattern": [
     "i  ",

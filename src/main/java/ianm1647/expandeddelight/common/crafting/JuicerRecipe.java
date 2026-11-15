@@ -5,203 +5,247 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import ianm1647.expandeddelight.client.recipebook.JuicerRecipeBookTab;
 import ianm1647.expandeddelight.common.registry.EDItems;
+import ianm1647.expandeddelight.common.registry.EDRecipeBookCategories;
 import ianm1647.expandeddelight.common.registry.EDRecipeSerializers;
 import ianm1647.expandeddelight.common.registry.EDRecipeTypes;
-import net.minecraft.core.HolderLookup;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.*;
+public class JuicerRecipe implements Recipe<RecipeWrapper>
+{
+	public static final int INPUT_SLOTS = 2;
 
-public class JuicerRecipe implements Recipe<RecipeWrapper> {
-   public static final int INPUT_SLOTS = 2;
-   private final String group;
-   private final JuicerRecipeBookTab tab;
-   private final NonNullList<Ingredient> inputItems;
-   private final ItemStack output;
-   private final ItemStack container;
-   private final ItemStack containerOverride;
-   private final float experience;
-   private final int juiceTime;
+	private final String group;
+	private final JuicerRecipeBookTab tab;
+	private final NonNullList<Ingredient> inputItems;
+	private final ItemStackTemplate output;
+	@Nullable
+	private final ItemStackTemplate containerOverride;
+	private final float experience;
+	private final int juiceTime;
 
-   public JuicerRecipe(String group, @Nullable JuicerRecipeBookTab tab, NonNullList<Ingredient> inputItems, ItemStack output, ItemStack container, float experience, int juiceTime) {
-      this.group = group;
-      this.tab = tab;
-      this.inputItems = inputItems;
-      this.output = output;
-      if (!container.isEmpty()) {
-         this.container = container;
-      } else if (!output.getCraftingRemainingItem().isEmpty()) {
-         this.container = output.getCraftingRemainingItem();
-      } else {
-         this.container = ItemStack.EMPTY;
-      }
-      this.containerOverride = container;
-      this.experience = experience;
-      this.juiceTime = juiceTime;
-   }
+	public JuicerRecipe(String group, @Nullable JuicerRecipeBookTab tab, NonNullList<Ingredient> inputItems, ItemStack output, ItemStack container, float experience, int juiceTime) {
+		this(group, tab, inputItems, ItemStackTemplate.fromNonEmptyStack(output),
+				container.isEmpty() ? Optional.empty() : Optional.of(ItemStackTemplate.fromNonEmptyStack(container)), experience, juiceTime);
+	}
 
-   public String getGroup() {
-      return this.group;
-   }
+	private JuicerRecipe(String group, @Nullable JuicerRecipeBookTab tab, NonNullList<Ingredient> inputItems,
+			ItemStackTemplate output, Optional<ItemStackTemplate> containerOverride, float experience, int juiceTime) {
+		this.group = group;
+		this.tab = tab;
+		this.inputItems = inputItems;
+		this.output = output;
+		this.containerOverride = containerOverride.orElse(null);
+		this.experience = experience;
+		this.juiceTime = juiceTime;
+	}
 
-   @Nullable
-   public JuicerRecipeBookTab getRecipeBookTab() {
-      return this.tab;
-   }
+	public String getGroup() {
+		return this.group;
+	}
 
-   public NonNullList<Ingredient> getIngredients() {
-      return this.inputItems;
-   }
+	@Override
+	public String group() {
+		return this.group;
+	}
 
-   public ItemStack getResultItem(HolderLookup.Provider provider) {
-      return this.output;
-   }
+	@Override
+	public boolean showNotification() {
+		return true;
+	}
 
-   public ItemStack getOutputContainer() {
-      return this.container;
-   }
+	@Nullable
+	public JuicerRecipeBookTab getRecipeBookTab() {
+		return this.tab;
+	}
 
-   public ItemStack getContainerOverride() {
-      return this.containerOverride;
-   }
+	public NonNullList<Ingredient> getIngredients() {
+		return this.inputItems;
+	}
 
-   public ItemStack assemble(RecipeWrapper inv, HolderLookup.Provider provider) {
-      return this.output.copy();
-   }
+	public ItemStack getResultItem() {
+		return this.output.create();
+	}
 
-   public float getExperience() {
-      return this.experience;
-   }
+	public ItemStack getOutputContainer() {
+		if (this.containerOverride != null) {
+			return this.containerOverride.create();
+		}
+		ItemStack result = this.output.create();
+		ItemStackTemplate remainder = result.getItem().getCraftingRemainder(result);
+		return remainder != null ? remainder.create() : ItemStack.EMPTY;
+	}
 
-   public int getJuiceTime() {
-      return this.juiceTime;
-   }
+	public ItemStack getContainerOverride() {
+		return this.containerOverride != null ? this.containerOverride.create() : ItemStack.EMPTY;
+	}
 
-   public boolean matches(RecipeWrapper inv, Level level) {
-      List<ItemStack> inputs = new ArrayList();
-      int i = 0;
+	@Override
+	public ItemStack assemble(RecipeWrapper inv) {
+		return this.output.create();
+	}
 
-      for(int j = 0; j < 2; ++j) {
-         ItemStack itemstack = inv.getItem(j);
-         if (!itemstack.isEmpty()) {
-            ++i;
-            inputs.add(itemstack);
-         }
-      }
+	public float getExperience() {
+		return this.experience;
+	}
 
-      return i == this.inputItems.size() && RecipeMatcher.findMatches(inputs, this.inputItems) != null;
-   }
+	public int getJuiceTime() {
+		return this.juiceTime;
+	}
 
-   public boolean canCraftInDimensions(int width, int height) {
-      return width * height >= this.inputItems.size();
-   }
+	@Override
+	public boolean matches(RecipeWrapper inv, Level level) {
+		java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
+		int i = 0;
 
-   public RecipeSerializer<?> getSerializer() {
-      return EDRecipeSerializers.JUICING.get();
-   }
+		for (int j = 0; j < INPUT_SLOTS; ++j) {
+			ItemStack itemstack = inv.getItem(j);
+			if (!itemstack.isEmpty()) {
+				++i;
+				inputs.add(itemstack);
+			}
+		}
+		return i == this.inputItems.size() && RecipeMatcher.findMatches(inputs, this.inputItems) != null;
+	}
 
-   public RecipeType<?> getType() {
-      return EDRecipeTypes.JUICING.get();
-   }
+	public boolean canCraftInDimensions(int width, int height) {
+		return width * height >= this.inputItems.size();
+	}
 
-   public ItemStack getToastSymbol() {
-      return new ItemStack(EDItems.JUICER.get());
-   }
+	@Override
+	public RecipeSerializer<JuicerRecipe> getSerializer() {
+		return EDRecipeSerializers.JUICING.get();
+	}
 
-   public boolean equals(Object o) {
-      if (this == o) {
-         return true;
-      } else if (o != null && this.getClass() == o.getClass()) {
-         JuicerRecipe that = (JuicerRecipe)o;
-         if (Float.compare(that.getExperience(), this.getExperience()) != 0) {
-            return false;
-         } else if (this.getJuiceTime() != that.getJuiceTime()) {
-            return false;
-         } else if (!this.getGroup().equals(that.getGroup())) {
-            return false;
-         } else if (this.tab != that.tab) {
-            return false;
-         } else if (!this.inputItems.equals(that.inputItems)) {
-            return false;
-         } else {
-            return this.output.equals(that.output) && this.container.equals(that.container);
-         }
-      } else {
-         return false;
-      }
-   }
+	@Override
+	public RecipeType<JuicerRecipe> getType() {
+		return EDRecipeTypes.JUICING.get();
+	}
 
-   public int hashCode() {
-      int result = this.getGroup().hashCode();
-      result = 31 * result + (this.getRecipeBookTab() != null ? this.getRecipeBookTab().hashCode() : 0);
-      result = 31 * result + this.inputItems.hashCode();
-      result = 31 * result + this.output.hashCode();
-      result = 31 * result + this.container.hashCode();
-      result = 31 * result + (this.getExperience() != 0.0F ? Float.floatToIntBits(this.getExperience()) : 0);
-      result = 31 * result + this.getJuiceTime();
-      return result;
-   }
+	public ItemStack getToastSymbol() {
+		return new ItemStack(EDItems.JUICER.get());
+	}
 
-   public static class Serializer implements RecipeSerializer<JuicerRecipe> {
-      private static final MapCodec<JuicerRecipe> CODEC = RecordCodecBuilder.mapCodec((inst) -> inst.group(Codec.STRING.optionalFieldOf("group", "").forGetter(JuicerRecipe::getGroup),
-              JuicerRecipeBookTab.CODEC.optionalFieldOf("recipe_book_tab").xmap((optional) -> optional.orElse(JuicerRecipeBookTab.MISC), Optional::of).forGetter(JuicerRecipe::getRecipeBookTab),
-              Ingredient.LIST_CODEC_NONEMPTY.fieldOf("ingredients").xmap((ingredients) -> {
-         NonNullList<Ingredient> nonNullList = NonNullList.create();
-         nonNullList.addAll(ingredients);
-         return nonNullList;
-      }, (ingredients) -> ingredients).forGetter(JuicerRecipe::getIngredients), ItemStack.STRICT_CODEC.fieldOf("result").forGetter((r) -> r.output),
-              ItemStack.STRICT_CODEC.optionalFieldOf("container", ItemStack.EMPTY).forGetter(JuicerRecipe::getContainerOverride), Codec.FLOAT.optionalFieldOf("experience", 0.0F)
-                      .forGetter(JuicerRecipe::getExperience), Codec.INT.optionalFieldOf("juicingtime", 200).forGetter(JuicerRecipe::getJuiceTime)).apply(inst, JuicerRecipe::new));
-      public static final StreamCodec<RegistryFriendlyByteBuf, JuicerRecipe> STREAM_CODEC = StreamCodec.of(JuicerRecipe.Serializer::toNetwork, JuicerRecipe.Serializer::fromNetwork);
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
-      public Serializer() {
-      }
+		JuicerRecipe that = (JuicerRecipe) o;
 
-      public MapCodec<JuicerRecipe> codec() {
-         return CODEC;
-      }
+		if (Float.compare(that.getExperience(), getExperience()) != 0) return false;
+		if (getJuiceTime() != that.getJuiceTime()) return false;
+		if (!getGroup().equals(that.getGroup())) return false;
+		if (tab != that.tab) return false;
+		if (!inputItems.equals(that.inputItems)) return false;
+		if (!output.equals(that.output)) return false;
+		return java.util.Objects.equals(containerOverride, that.containerOverride);
+	}
 
-      @Override
-      public StreamCodec<RegistryFriendlyByteBuf, JuicerRecipe> streamCodec() {
-         return STREAM_CODEC;
-      }
+	@Override
+	public int hashCode() {
+		int result = getGroup().hashCode();
+		result = 31 * result + (getRecipeBookTab() != null ? getRecipeBookTab().hashCode() : 0);
+		result = 31 * result + inputItems.hashCode();
+		result = 31 * result + output.hashCode();
+		result = 31 * result + (containerOverride != null ? containerOverride.hashCode() : 0);
+		result = 31 * result + (getExperience() != 0.0f ? Float.floatToIntBits(getExperience()) : 0);
+		result = 31 * result + getJuiceTime();
+		return result;
+	}
 
-      private static JuicerRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
-         String groupIn = buffer.readUtf();
-         JuicerRecipeBookTab tabIn = JuicerRecipeBookTab.findByName(buffer.readUtf());
-         int i = buffer.readVarInt();
-         NonNullList<Ingredient> inputItemsIn = NonNullList.withSize(i, Ingredient.EMPTY);
-         inputItemsIn.replaceAll((ignored) -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
-         ItemStack outputIn = ItemStack.STREAM_CODEC.decode(buffer);
-         ItemStack container = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
-         float experienceIn = buffer.readFloat();
-         int cookTimeIn = buffer.readVarInt();
-         return new JuicerRecipe(groupIn, tabIn, inputItemsIn, outputIn, container, experienceIn, cookTimeIn);
-      }
+	@Override
+	public PlacementInfo placementInfo() {
+		return PlacementInfo.create(this.inputItems);
+	}
 
-      private static void toNetwork(RegistryFriendlyByteBuf buffer, JuicerRecipe recipe) {
-         buffer.writeUtf(recipe.group);
-         buffer.writeUtf(recipe.tab != null ? recipe.tab.toString() : "");
-         buffer.writeVarInt(recipe.inputItems.size());
-         Iterator var2 = recipe.inputItems.iterator();
+	@Override
+	public RecipeBookCategory recipeBookCategory() {
+		return switch (this.tab != null ? this.tab : JuicerRecipeBookTab.MISC) {
 
-         while(var2.hasNext()) {
-            Ingredient ingredient = (Ingredient)var2.next();
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient);
-         }
+			case DRINKS -> EDRecipeBookCategories.JUICING_DRINKS.get();
+			case MISC -> EDRecipeBookCategories.JUICING_MISC.get();
+		};
+	}
 
-         ItemStack.STREAM_CODEC.encode(buffer, recipe.output);
-         ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.container);
-         buffer.writeFloat(recipe.experience);
-         buffer.writeVarInt(recipe.juiceTime);
-      }
-   }
+	@Override
+	public List<RecipeDisplay> display() {
+		return List.of(new ShapelessCraftingRecipeDisplay(
+				this.inputItems.stream().map(Ingredient::display).toList(),
+				new SlotDisplay.ItemStackSlotDisplay(this.output),
+				new SlotDisplay.ItemSlotDisplay(EDItems.JUICER.get())
+		));
+	}
+
+	public static final class Serializer
+	{
+		public static final MapCodec<JuicerRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+				Codec.STRING.optionalFieldOf("group", "").forGetter(JuicerRecipe::getGroup),
+				JuicerRecipeBookTab.CODEC.optionalFieldOf("recipe_book_tab", JuicerRecipeBookTab.MISC).forGetter(JuicerRecipe::getRecipeBookTab),
+				Ingredient.CODEC.listOf().fieldOf("ingredients").xmap(ingredients -> {
+					NonNullList<Ingredient> nonNullList = NonNullList.create();
+					nonNullList.addAll(ingredients);
+					return nonNullList;
+				}, ingredients -> ingredients).forGetter(JuicerRecipe::getIngredients),
+				ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.output),
+				ItemStackTemplate.CODEC.optionalFieldOf("container").forGetter(r -> Optional.ofNullable(r.containerOverride)),
+				Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(JuicerRecipe::getExperience),
+				Codec.INT.optionalFieldOf("juicingtime", 200).forGetter(JuicerRecipe::getJuiceTime)
+		).apply(inst, JuicerRecipe::new));
+
+		public static final StreamCodec<RegistryFriendlyByteBuf, JuicerRecipe> STREAM_CODEC = StreamCodec.of(JuicerRecipe.Serializer::toNetwork, JuicerRecipe.Serializer::fromNetwork);
+		public static final RecipeSerializer<JuicerRecipe> INSTANCE = new RecipeSerializer<>(CODEC, STREAM_CODEC);
+
+		private Serializer() {
+		}
+
+		private static JuicerRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+			String group = buffer.readUtf();
+			JuicerRecipeBookTab tab = JuicerRecipeBookTab.findByName(buffer.readUtf());
+			int i = buffer.readVarInt();
+			NonNullList<Ingredient> inputItems = NonNullList.createWithCapacity(i);
+			for (int ingredientIndex = 0; ingredientIndex < i; ingredientIndex++) {
+				inputItems.add(Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
+			}
+
+			ItemStackTemplate output = ItemStackTemplate.STREAM_CODEC.decode(buffer);
+			Optional<ItemStackTemplate> container = buffer.readBoolean()
+					? Optional.of(ItemStackTemplate.STREAM_CODEC.decode(buffer))
+					: Optional.empty();
+			float experience = buffer.readFloat();
+			int juiceTime = buffer.readVarInt();
+			return new JuicerRecipe(group, tab, inputItems, output, container, experience, juiceTime);
+		}
+
+		private static void toNetwork(RegistryFriendlyByteBuf buffer, JuicerRecipe recipe) {
+			buffer.writeUtf(recipe.group);
+			buffer.writeUtf(recipe.tab != null ? recipe.tab.toString() : "");
+			buffer.writeVarInt(recipe.inputItems.size());
+
+			for (Ingredient ingredient : recipe.inputItems) {
+				Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient);
+			}
+
+			ItemStackTemplate.STREAM_CODEC.encode(buffer, recipe.output);
+			buffer.writeBoolean(recipe.containerOverride != null);
+			if (recipe.containerOverride != null) {
+				ItemStackTemplate.STREAM_CODEC.encode(buffer, recipe.containerOverride);
+			}
+			buffer.writeFloat(recipe.experience);
+			buffer.writeVarInt(recipe.juiceTime);
+		}
+	}
 }

@@ -6,12 +6,8 @@
   },
   "experience": 1.0,
   "ingredients": [
-    {
-      "item": "minecraft:melon_slice"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "minecraft:melon_slice",
+    "minecraft:sugar"
   ],
   "recipe_book_tab": "drinks",
   "result": {

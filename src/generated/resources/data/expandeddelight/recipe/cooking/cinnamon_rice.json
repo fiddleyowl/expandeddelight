@@ -6,12 +6,8 @@
   },
   "experience": 0.5,
   "ingredients": [
-    {
-      "tag": "c:crops/rice"
-    },
-    {
-      "item": "expandeddelight:cinnamon"
-    }
+    "#c:crops/rice",
+    "expandeddelight:cinnamon"
   ],
   "recipe_book_tab": "misc",
   "result": {

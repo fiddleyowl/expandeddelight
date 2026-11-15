@@ -6,15 +6,9 @@
   },
   "experience": 0.8,
   "ingredients": [
-    {
-      "item": "minecraft:water_bucket"
-    },
-    {
-      "tag": "c:crops/asparagus"
-    },
-    {
-      "tag": "c:foods/leafy_green"
-    }
+    "minecraft:water_bucket",
+    "#c:crops/asparagus",
+    "#c:foods/leafy_green"
   ],
   "recipe_book_tab": "meals",
   "result": {

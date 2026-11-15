@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:bread"
-    },
-    {
-      "tag": "c:foods/cheese"
-    }
+    "minecraft:bread",
+    "#c:foods/cheese"
   ],
   "result": {
     "count": 1,

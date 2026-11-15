@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "wooden_sign",
   "key": {
-    "i": {
-      "item": "expandeddelight:cinnamon_planks"
-    },
-    "s": {
-      "tag": "c:rods/wooden"
-    }
+    "i": "expandeddelight:cinnamon_planks",
+    "s": "#c:rods/wooden"
   },
   "pattern": [
     "iii",

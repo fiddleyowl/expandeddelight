@@ -1,28 +1,28 @@
 package ianm1647.expandeddelight.integration.jei;
 
+import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.crafting.JuicerRecipe;
 import ianm1647.expandeddelight.common.registry.EDRecipeTypes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-
 import java.util.List;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
 
+@EventBusSubscriber(modid = ExpandedDelight.MODID, value = Dist.CLIENT)
 public class JEIRecipes {
-   private final RecipeManager recipeManager;
+    private static RecipeMap recipes = RecipeMap.EMPTY;
 
-   public JEIRecipes() {
-      Minecraft minecraft = Minecraft.getInstance();
-      ClientLevel level = minecraft.level;
-      if (level != null) {
-         this.recipeManager = level.getRecipeManager();
-      } else {
-         throw new NullPointerException("minecraft world must not be null.");
-      }
-   }
+    @SubscribeEvent
+    public static void receiveRecipes(RecipesReceivedEvent event) { recipes = event.getRecipeMap(); }
 
-   public List<JuicerRecipe> getJuicerRecipes() {
-      return recipeManager.getAllRecipesFor(EDRecipeTypes.JUICING.get()).stream().map(RecipeHolder::value).toList();
-   }
+    @SubscribeEvent
+    public static void disconnect(ClientPlayerNetworkEvent.LoggingOut event) { recipes = RecipeMap.EMPTY; }
+
+    public List<JuicerRecipe> getJuicerRecipes() {
+        return recipes.byType(EDRecipeTypes.JUICING.get()).stream().map(RecipeHolder::value).toList();
+    }
 }

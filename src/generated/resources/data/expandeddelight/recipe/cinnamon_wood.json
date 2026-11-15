@@ -3,9 +3,7 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "i": {
-      "item": "expandeddelight:cinnamon_log"
-    }
+    "i": "expandeddelight:cinnamon_log"
   },
   "pattern": [
     "ii",

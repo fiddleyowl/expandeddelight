@@ -3,12 +3,11 @@ package ianm1647.expandeddelight.common.registry;
 import ianm1647.expandeddelight.ExpandedDelight;
 import ianm1647.expandeddelight.common.entity.CinnamonBoat;
 import ianm1647.expandeddelight.common.entity.CinnamonChestBoat;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Supplier;
 
 public class EDEntityTypes {
     public static final DeferredRegister<EntityType<?>> ENTITIES;
@@ -20,9 +19,9 @@ public class EDEntityTypes {
         ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, ExpandedDelight.MODID);
 
         CINNAMON_BOAT = ENTITIES.register("cinnamon_boat",
-                () -> EntityType.Builder.<CinnamonBoat>of(CinnamonBoat::new, MobCategory.MISC).sized(1.375f, 0.5625f).clientTrackingRange(10).build(ExpandedDelight.MODID + ":cinnamon_boat"));
+                () -> EntityType.Builder.<CinnamonBoat>of(CinnamonBoat::new, MobCategory.MISC).sized(1.375f, 0.5625f).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, ExpandedDelight.loc("cinnamon_boat"))));
         CINNAMON_CHEST_BOAT = ENTITIES.register("cinnamon_chest_boat",
-                () -> EntityType.Builder.<CinnamonChestBoat>of(CinnamonChestBoat::new, MobCategory.MISC).sized(1.375f, 0.5625f).clientTrackingRange(10).build(ExpandedDelight.MODID + ":cinnamon_chest_boat"));
+                () -> EntityType.Builder.<CinnamonChestBoat>of(CinnamonChestBoat::new, MobCategory.MISC).sized(1.375f, 0.5625f).clientTrackingRange(10).build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, ExpandedDelight.loc("cinnamon_chest_boat"))));
 
 
     }

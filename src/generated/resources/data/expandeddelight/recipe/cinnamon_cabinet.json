@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "fd_cabinet",
   "key": {
-    "i": {
-      "item": "expandeddelight:cinnamon_planks"
-    },
-    "t": {
-      "item": "expandeddelight:cinnamon_trapdoor"
-    }
+    "i": "expandeddelight:cinnamon_planks",
+    "t": "expandeddelight:cinnamon_trapdoor"
   },
   "pattern": [
     "iii",

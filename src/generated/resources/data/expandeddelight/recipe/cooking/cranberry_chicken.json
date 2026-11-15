@@ -6,15 +6,9 @@
   },
   "experience": 0.9,
   "ingredients": [
-    {
-      "item": "expandeddelight:cranberries"
-    },
-    {
-      "tag": "c:foods/cooked_chicken"
-    },
-    {
-      "tag": "c:crops/onion"
-    }
+    "expandeddelight:cranberries",
+    "#c:foods/cooked_chicken",
+    "#c:crops/onion"
   ],
   "recipe_book_tab": "meals",
   "result": {

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "c": {
-      "tag": "c:crops/wheat"
-    },
-    "w": {
-      "item": "expandeddelight:cinnamon"
-    }
+    "c": "#c:crops/wheat",
+    "w": "expandeddelight:cinnamon"
   },
   "pattern": [
     "cwc"

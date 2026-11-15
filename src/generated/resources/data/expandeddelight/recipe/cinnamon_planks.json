@@ -3,9 +3,7 @@
   "category": "building",
   "group": "wooden_planks",
   "ingredients": [
-    {
-      "tag": "expandeddelight:cinnamon_logs"
-    }
+    "#expandeddelight:cinnamon_logs"
   ],
   "result": {
     "count": 4,

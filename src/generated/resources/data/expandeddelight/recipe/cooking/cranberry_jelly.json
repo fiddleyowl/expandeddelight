@@ -6,15 +6,9 @@
   },
   "experience": 0.35,
   "ingredients": [
-    {
-      "item": "expandeddelight:cranberries"
-    },
-    {
-      "item": "expandeddelight:cranberries"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "expandeddelight:cranberries",
+    "expandeddelight:cranberries",
+    "minecraft:sugar"
   ],
   "recipe_book_tab": "misc",
   "result": {

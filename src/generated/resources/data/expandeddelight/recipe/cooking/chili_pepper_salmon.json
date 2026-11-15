@@ -6,18 +6,10 @@
   },
   "experience": 1.3,
   "ingredients": [
-    {
-      "tag": "c:foods/cooked_salmon"
-    },
-    {
-      "tag": "c:crops/chili_pepper"
-    },
-    {
-      "tag": "c:crops/rice"
-    },
-    {
-      "tag": "c:crops/onion"
-    }
+    "#c:foods/cooked_salmon",
+    "#c:crops/chili_pepper",
+    "#c:crops/rice",
+    "#c:crops/onion"
   ],
   "recipe_book_tab": "meals",
   "result": {

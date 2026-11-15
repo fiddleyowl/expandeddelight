@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "expandeddelight:cranberry_bag"
-    }
+    "expandeddelight:cranberry_bag"
   ],
   "result": {
     "count": 9,

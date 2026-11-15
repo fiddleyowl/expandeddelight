@@ -6,21 +6,11 @@
   },
   "experience": 1.2,
   "ingredients": [
-    {
-      "tag": "c:eggs"
-    },
-    {
-      "tag": "c:eggs"
-    },
-    {
-      "tag": "c:crops/asparagus"
-    },
-    {
-      "tag": "c:foods/cheese"
-    },
-    {
-      "tag": "c:dusts/salt"
-    }
+    "#c:eggs",
+    "#c:eggs",
+    "#c:crops/asparagus",
+    "#c:foods/cheese",
+    "#c:dusts/salt"
   ],
   "recipe_book_tab": "meals",
   "result": {

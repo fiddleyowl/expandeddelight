@@ -6,18 +6,10 @@
   },
   "experience": 0.9,
   "ingredients": [
-    {
-      "item": "expandeddelight:sweet_potato"
-    },
-    {
-      "tag": "c:foods/milk"
-    },
-    {
-      "tag": "c:eggs"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "expandeddelight:sweet_potato",
+    "#c:foods/milk",
+    "#c:eggs",
+    "minecraft:sugar"
   ],
   "recipe_book_tab": "meals",
   "result": {

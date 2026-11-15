@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "expandeddelight:cranberry_cobbler_slice"
-    }
+    "#": "expandeddelight:cranberry_cobbler_slice"
   },
   "pattern": [
     "##",

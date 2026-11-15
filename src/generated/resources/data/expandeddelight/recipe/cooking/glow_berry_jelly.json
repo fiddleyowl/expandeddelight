@@ -6,15 +6,9 @@
   },
   "experience": 0.35,
   "ingredients": [
-    {
-      "item": "minecraft:glow_berries"
-    },
-    {
-      "item": "minecraft:glow_berries"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "minecraft:glow_berries",
+    "minecraft:glow_berries",
+    "minecraft:sugar"
   ],
   "recipe_book_tab": "misc",
   "result": {

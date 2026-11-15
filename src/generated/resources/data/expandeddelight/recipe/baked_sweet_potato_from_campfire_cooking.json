@@ -3,9 +3,7 @@
   "category": "food",
   "cookingtime": 600,
   "experience": 0.35,
-  "ingredient": {
-    "item": "expandeddelight:sweet_potato"
-  },
+  "ingredient": "expandeddelight:sweet_potato",
   "result": {
     "count": 1,
     "id": "expandeddelight:baked_sweet_potato"

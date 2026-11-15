@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "expandeddelight:honeyed_goat_cheese_tart_slice"
-    }
+    "#": "expandeddelight:honeyed_goat_cheese_tart_slice"
   },
   "pattern": [
     "##",

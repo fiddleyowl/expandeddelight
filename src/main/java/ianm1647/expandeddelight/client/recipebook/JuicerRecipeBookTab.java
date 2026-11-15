@@ -2,7 +2,6 @@ package ianm1647.expandeddelight.client.recipebook;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-
 import java.util.EnumSet;
 
 public enum JuicerRecipeBookTab {

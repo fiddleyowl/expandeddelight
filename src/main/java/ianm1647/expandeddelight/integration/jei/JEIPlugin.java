@@ -9,23 +9,18 @@ import ianm1647.expandeddelight.common.registry.EDMenuTypes;
 import ianm1647.expandeddelight.integration.jei.category.CheeseFermentingRecipeCategory;
 import ianm1647.expandeddelight.integration.jei.category.JuicingRecipeCategory;
 import ianm1647.expandeddelight.integration.jei.resource.CheeseFermentingDummy;
+import java.util.List;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.*;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
-   private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ExpandedDelight.MODID, "jei_plugin");
+   private static final Identifier ID = Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "jei_plugin");
 
    public void registerCategories(IRecipeCategoryRegistration registry) {
       registry.addRecipeCategories(new JuicingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -58,7 +53,7 @@ public class JEIPlugin implements IModPlugin {
       registration.addRecipeTransferHandler(JuicerMenu.class, EDMenuTypes.JUICER.get(), JEIRecipeTypes.JUICING, 0, 2, 5, 36);
    }
 
-   public ResourceLocation getPluginUid() {
+   public Identifier getPluginUid() {
       return ID;
    }
 }

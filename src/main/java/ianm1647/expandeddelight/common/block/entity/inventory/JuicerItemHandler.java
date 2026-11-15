@@ -3,9 +3,7 @@ package ianm1647.expandeddelight.common.block.entity.inventory;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class JuicerItemHandler implements IItemHandler {
     private static final int SLOTS_INPUT = 2;
@@ -19,7 +17,7 @@ public class JuicerItemHandler implements IItemHandler {
         this.side = side;
     }
 
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+    public boolean isItemValid(int slot, ItemStack stack) {
         return this.itemHandler.isItemValid(slot, stack);
     }
 
@@ -27,13 +25,11 @@ public class JuicerItemHandler implements IItemHandler {
         return this.itemHandler.getSlots();
     }
 
-    @Nonnull
-    public ItemStack getStackInSlot(int slot) {
+        public ItemStack getStackInSlot(int slot) {
         return this.itemHandler.getStackInSlot(slot);
     }
 
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (this.side != null && !this.side.equals(Direction.UP)) {
             return slot == 3 ? this.itemHandler.insertItem(slot, stack, simulate) : stack;
         } else {
@@ -41,8 +37,7 @@ public class JuicerItemHandler implements IItemHandler {
         }
     }
 
-    @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (this.side != null && !this.side.equals(Direction.UP)) {
             return slot == 4 ? this.itemHandler.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         } else {

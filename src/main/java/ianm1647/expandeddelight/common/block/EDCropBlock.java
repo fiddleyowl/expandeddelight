@@ -6,9 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -17,21 +15,21 @@ public class EDCropBlock extends CropBlock {
     private static final VoxelShape[] SHAPE_BY_AGE;
 
 
-    public EDCropBlock() {
-        super(BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT).instabreak().randomTicks().noCollission());
+    public EDCropBlock(Properties properties) {
+        super(properties.instabreak().randomTicks().noCollision());
     }
 
     protected ItemLike getBaseSeedId() {
-        if(this == EDBlocks.ASPARAGUS_CROP) {
+        if(this == EDBlocks.ASPARAGUS_CROP.get()) {
             return EDItems.ASPARAGUS_SEEDS.get();
         }
-        if(this == EDBlocks.SWEET_POTATO_CROP) {
+        if(this == EDBlocks.SWEET_POTATO_CROP.get()) {
             return EDItems.SWEET_POTATO.get();
         }
-        if(this == EDBlocks.CHILI_PEPPER_CROP) {
+        if(this == EDBlocks.CHILI_PEPPER_CROP.get()) {
             return EDItems.CHILI_PEPPER_SEEDS.get();
         }
-        if(this == EDBlocks.PEANUT_CROP) {
+        if(this == EDBlocks.PEANUT_CROP.get()) {
             return EDItems.PEANUT.get();
         }
         return this;

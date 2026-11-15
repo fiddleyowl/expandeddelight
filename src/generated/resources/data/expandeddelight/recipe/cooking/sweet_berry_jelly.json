@@ -6,15 +6,9 @@
   },
   "experience": 0.35,
   "ingredients": [
-    {
-      "item": "minecraft:sweet_berries"
-    },
-    {
-      "item": "minecraft:sweet_berries"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "minecraft:sweet_berries",
+    "minecraft:sweet_berries",
+    "minecraft:sugar"
   ],
   "recipe_book_tab": "misc",
   "result": {

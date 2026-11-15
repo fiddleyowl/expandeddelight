@@ -9,10 +9,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -39,25 +38,20 @@ public class CranberryPlantBlock extends BushBlock implements BonemealableBlock 
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     protected static final VoxelShape AABB = Block.box(1.0, 0.0, 1.0, 15.0, 1.5, 15.0);
 
-    @Override
-    public MapCodec<CranberryPlantBlock> codec() {
-        return CODEC;
-    }
-
     public CranberryPlantBlock(BlockBehaviour.Properties properties) {
-        super(properties.noCollission().instabreak().randomTicks());
+        super(properties.noCollision().instabreak().randomTicks());
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)));
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return new ItemStack(EDItems.CRANBERRIES.get());
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        if (level instanceof ServerLevel && entity instanceof Boat) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, net.minecraft.world.entity.InsideBlockEffectApplier effects, boolean isPrecise) {
+        super.entityInside(state, level, pos, entity, effects, isPrecise);
+        if (level instanceof ServerLevel && entity instanceof AbstractBoat) {
             level.destroyBlock(new BlockPos(pos), true, entity);
         }
     }
@@ -84,11 +78,11 @@ public class CranberryPlantBlock extends BushBlock implements BonemealableBlock 
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         int i = state.getValue(AGE);
         boolean flag = i == 3;
         return !flag && stack.is(Items.BONE_MEAL)
-                ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
+                ? InteractionResult.PASS
                 : super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
@@ -97,15 +91,15 @@ public class CranberryPlantBlock extends BushBlock implements BonemealableBlock 
         int i = state.getValue(AGE);
         boolean flag = i == 3;
         if (i > 2) {
-            int j = 1 + level.random.nextInt(2);
+            int j = 1 + level.getRandom().nextInt(2);
             popResource(level, pos, new ItemStack(EDItems.CRANBERRIES.get(), j + (flag ? 1 : 0)));
             level.playSound(
-                    null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F
+                    null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.getRandom().nextFloat() * 0.4F
             );
             BlockState blockstate = state.setValue(AGE, Integer.valueOf(1));
             level.setBlock(pos, blockstate, 2);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, blockstate));
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         } else {
             return super.useWithoutItem(state, level, pos, player, hitResult);
         }

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "minecraft:glass"
-    },
-    "p": {
-      "item": "minecraft:paper"
-    }
+    "g": "minecraft:glass",
+    "p": "minecraft:paper"
   },
   "pattern": [
     "g g",
