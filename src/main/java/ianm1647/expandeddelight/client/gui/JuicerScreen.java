@@ -36,7 +36,7 @@ public class JuicerScreen extends AbstractRecipeBookScreen<JuicerMenu>
 	@Override
 	public void init() {
 		super.init();
-		this.titleLabelX = 28;
+		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
 		if (!EDConfig.ENABLE_RECIPE_BOOK_JUICER.get()) {
 			this.recipeBookComponent.hide();
 			this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
