@@ -37,7 +37,7 @@ The original bottle-slot texture and pie model names remain available for resour
 
 ## Validation
 
-The build, server GameTests, KubeJS recipe scripting, and a client check of the juicer and recipe book pass.
+The build, server GameTests, KubeJS recipe scripting, and client checks of the juicer, recipe book, and advancement screen pass. The client check also verifies item, block, and entity names, the advancement background, and Farmer's Delight tooltip translations.
 
 ```sh
 # Original identifiers/resources, legacy names, juicer save/resume, and boats.
@@ -46,12 +46,12 @@ bash gradlew runGameTestServer
 # Also create and load a juicing recipe through the KubeJS schema.
 bash gradlew runGameTestServer -PwithKubeJS=true
 
-# Open the juicer and recipe book in a disposable test world,
-# save an in-game screenshot, and exit the client.
+# Open the juicer, recipe book, and advancement screen in a disposable test world,
+# save in-game screenshots, and exit the client.
 bash gradlew runClient -PportSmoke
 ```
 
-GameTest reports are written to `build/port-gametest.xml` and `build/port-gametest-kubejs.xml`. The client screenshot is `run/screenshots/expanded-delight-port-smoke.png`.
+GameTest reports are written to `build/port-gametest.xml` and `build/port-gametest-kubejs.xml`. Client screenshots are saved to `run/screenshots/expanded-delight-port-smoke.png` and `run/screenshots/expanded-delight-advancements-smoke.png`.
 
 Tests use dedicated worlds in `run-gametest/`, `run-gametest-kubejs/`, and `run/saves/expanded-delight-port-smoke/`; each test command refreshes its own world. Test code in `src/portTest/` is excluded from release jars.
 

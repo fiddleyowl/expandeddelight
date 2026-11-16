@@ -86,7 +86,7 @@ public class JuicerScreen extends AbstractRecipeBookScreen<JuicerMenu>
 
 			ItemStack containerStack = this.menu.tileEntity.getContainer();
 			if (!containerStack.isEmpty()) {
-				tooltip.add(Component.translatable("farmersdelight.container.cooking_pot.served_on", containerStack.getHoverName().getString())
+				tooltip.add(Component.translatable("container.farmersdelight.cooking_pot.served_on", containerStack.getHoverName().getString())
 						.withStyle(ChatFormatting.GRAY));
 			}
 			graphics.setComponentTooltipForNextFrame(this.font, tooltip, mouseX, mouseY, mealStack);

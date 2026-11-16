@@ -30,11 +30,11 @@ public class JuicerTooltip implements ClientTooltipComponent
 	public int getWidth(Font font) {
 		if (!mealStack.isEmpty()) {
 			MutableComponent textServingsOf = mealStack.getCount() == 1
-					? Component.translatable("farmersdelight.tooltip.cooking_pot.single_serving")
-					: Component.translatable("farmersdelight.tooltip.cooking_pot.many_servings", mealStack.getCount());
+					? Component.translatable("tooltip.farmersdelight.cooking_pot.single_serving")
+					: Component.translatable("tooltip.farmersdelight.cooking_pot.many_servings", mealStack.getCount());
 			return Math.max(font.width(textServingsOf), font.width(mealStack.getHoverName()) + 20);
 		} else {
-			return font.width(Component.translatable("farmersdelight.tooltip.cooking_pot.empty"));
+			return font.width(Component.translatable("tooltip.farmersdelight.cooking_pot.empty"));
 		}
 	}
 
@@ -49,13 +49,13 @@ public class JuicerTooltip implements ClientTooltipComponent
 		int gray = 0xFFAAAAAA;
 		if (!mealStack.isEmpty()) {
 			MutableComponent textServingsOf = mealStack.getCount() == 1
-					? Component.translatable("farmersdelight.tooltip.cooking_pot.single_serving")
-					: Component.translatable("farmersdelight.tooltip.cooking_pot.many_servings", mealStack.getCount());
+					? Component.translatable("tooltip.farmersdelight.cooking_pot.single_serving")
+					: Component.translatable("tooltip.farmersdelight.cooking_pot.many_servings", mealStack.getCount());
 
 			gui.text(font, textServingsOf, x, y, gray, true);
 			gui.text(font, mealStack.getHoverName(), x + ITEM_SIZE + MARGIN, y + textSpacing + MARGIN, -1, true);
 		} else {
-			MutableComponent textEmpty = Component.translatable("farmersdelight.tooltip.cooking_pot.empty");
+			MutableComponent textEmpty = Component.translatable("tooltip.farmersdelight.cooking_pot.empty");
 			gui.text(font, textEmpty, x, y, gray, true);
 		}
 	}

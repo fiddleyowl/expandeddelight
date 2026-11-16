@@ -6,7 +6,7 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "minecraft:textures/block/mud_bricks.png",
+    "background": "minecraft:block/mud_bricks",
     "description": {
       "translate": "expandeddelight.advancement.root.desc"
     },
