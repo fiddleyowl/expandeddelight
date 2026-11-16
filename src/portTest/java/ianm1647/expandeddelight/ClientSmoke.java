@@ -1,7 +1,9 @@
 package ianm1647.expandeddelight;
 
 import ianm1647.expandeddelight.client.gui.JuicerScreen;
+import ianm1647.expandeddelight.client.gui.JuicerRecipeBookComponent;
 import ianm1647.expandeddelight.common.block.entity.JuicerBlockEntity;
+import ianm1647.expandeddelight.common.block.entity.container.JuicerMenu;
 import ianm1647.expandeddelight.common.registry.EDBlocks;
 import ianm1647.expandeddelight.common.registry.EDItems;
 import net.minecraft.client.Minecraft;
@@ -32,6 +34,12 @@ public final class ClientSmoke {
         }
 
         if (++ticks == 40) {
+            var bottle = minecraft.getAtlasManager().getAtlasOrThrow(net.minecraft.data.AtlasIds.GUI)
+                    .getSprite(JuicerMenu.EMPTY_CONTAINER_SLOT_BOTTLE);
+            if (!bottle.contents().name().equals(JuicerMenu.EMPTY_CONTAINER_SLOT_BOTTLE)) {
+                throw new IllegalStateException("Original bottle-slot sprite failed to load");
+            }
+            ExpandedDelight.LOGGER.info("PORT_CLIENT_SMOKE: original bottle-slot sprite loaded");
             var uuid = minecraft.player.getUUID();
             server.execute(() -> {
                 var player = server.getPlayerList().getPlayer(uuid);
@@ -56,12 +64,20 @@ public final class ClientSmoke {
             });
         }
         if (ticks == 140 && minecraft.screen instanceof JuicerScreen screen) {
-            screen.children().stream().filter(ImageButton.class::isInstance).map(ImageButton.class::cast)
-                    .findFirst().orElseThrow().onPress(new KeyEvent(257, 0, 0));
+            var book = screen.children().stream().filter(JuicerRecipeBookComponent.class::isInstance)
+                    .map(JuicerRecipeBookComponent.class::cast).findFirst().orElseThrow();
+            if (!book.isVisible()) {
+                screen.children().stream().filter(ImageButton.class::isInstance).map(ImageButton.class::cast)
+                        .findFirst().orElseThrow().onPress(new KeyEvent(257, 0, 0));
+            }
         }
         if (ticks == 180) {
-            if (!(minecraft.screen instanceof JuicerScreen)) {
+            if (!(minecraft.screen instanceof JuicerScreen screen)) {
                 throw new IllegalStateException("Juicer screen failed to remain open");
+            }
+            if (screen.children().stream().filter(JuicerRecipeBookComponent.class::isInstance)
+                    .map(JuicerRecipeBookComponent.class::cast).noneMatch(JuicerRecipeBookComponent::isVisible)) {
+                throw new IllegalStateException("Juicer recipe book failed to open");
             }
             Screenshot.grab(minecraft.gameDirectory, "expanded-delight-port-smoke.png",
                     minecraft.getMainRenderTarget(), 1,

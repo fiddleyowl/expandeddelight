@@ -51,7 +51,7 @@ public class JuicerRecipeBookComponent extends RecipeBookComponent<JuicerMenu>
 
 	@Override
 	protected Component getRecipeFilterName() {
-		return Component.translatable("gui.recipebook.toggleRecipes.craftable");
+		return Component.translatable("expandeddelight.container.recipe_book.juiceable");
 	}
 
 	@Override

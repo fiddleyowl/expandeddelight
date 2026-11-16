@@ -30,7 +30,7 @@ public class JuicerMenu extends RecipeBookMenu {
     private int display = 2;
     private int bottle = 3;
 
-    public static final Identifier EMPTY_CONTAINER_SLOT_BOTTLE = Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "container/slot/bottle");
+    public static final Identifier EMPTY_CONTAINER_SLOT_BOTTLE = Identifier.fromNamespaceAndPath(ExpandedDelight.MODID, "item/empty_container_slot_bottle");
     public final JuicerBlockEntity tileEntity;
     public final ItemStackHandler inventory;
     private final ContainerData juicerData;

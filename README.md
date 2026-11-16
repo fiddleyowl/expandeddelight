@@ -33,8 +33,10 @@ The migrated JSON in `src/main/resources/` and `src/generated/resources/` is mai
 
 The build, server GameTests, KubeJS recipe scripting, and a client check of the juicer and recipe book pass.
 
+Compatibility checks compare registered IDs, item translation keys, block-state properties, recipe IDs, resource paths, and English translations against the original 1.21.1 source. The original bottle-slot texture and pie model names remain available for resource packs. Juicer custom names accept the original JSON-string format and the early port's component format.
+
 ```sh
-# Resource loading, juicer save/resume, and cinnamon boat creation.
+# Original identifiers/resources, legacy names, juicer save/resume, and boats.
 bash gradlew runGameTestServer
 
 # Also create and load a juicing recipe through the KubeJS schema.

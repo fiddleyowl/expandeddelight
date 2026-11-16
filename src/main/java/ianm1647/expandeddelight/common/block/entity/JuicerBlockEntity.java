@@ -1,6 +1,14 @@
 package ianm1647.expandeddelight.common.block.entity;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import ianm1647.expandeddelight.common.block.JuicerBlock;
 import ianm1647.expandeddelight.common.block.entity.container.JuicerMenu;
 import ianm1647.expandeddelight.common.block.entity.inventory.JuicerItemHandler;
@@ -116,7 +124,7 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 		juiceTime = input.getIntOr("JuiceTime", 0);
 		juiceTimeTotal = input.getIntOr("JuiceTimeTotal", 0);
 		containerStack = input.read("Container", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
-		customName = input.read("CustomName", ComponentSerialization.CODEC).orElse(null);
+		customName = input.read("CustomName", CUSTOM_NAME_CODEC).orElse(null);
 		usedRecipeTracker.clear();
 		ValueInput recipes = input.childOrEmpty("RecipesUsed");
 		for (String key : recipes.keySet()) {
@@ -124,13 +132,40 @@ public class JuicerBlockEntity extends SyncedBlockEntity implements MenuProvider
 		}
 	}
 
+   // Keep the original JSON-string format, and also accept early port saves with direct components.
+   private static final Codec<Component> CUSTOM_NAME_CODEC = new Codec<>() {
+      @Override
+      public <T> DataResult<Pair<Component, T>> decode(DynamicOps<T> ops, T input) {
+         return Codec.either(Codec.STRING, ComponentSerialization.CODEC).decode(ops, input)
+               .map(pair -> pair.mapFirst(name -> name.map(text -> {
+                  try {
+                     return ComponentSerialization.CODEC.parse(jsonOps(ops), JsonParser.parseString(text))
+                           .result().orElseGet(() -> Component.literal(text));
+                  } catch (JsonParseException ignored) {
+                     return Component.literal(text);
+                  }
+               }, component -> component)));
+      }
+
+      @Override
+      public <T> DataResult<T> encode(Component value, DynamicOps<T> ops, T prefix) {
+         return ComponentSerialization.CODEC.encodeStart(jsonOps(ops), value)
+               .flatMap(json -> Codec.STRING.encode(json.toString(), ops, prefix));
+      }
+
+      private static <T> DynamicOps<JsonElement> jsonOps(DynamicOps<T> ops) {
+         return ops instanceof net.minecraft.resources.RegistryOps<T> registries
+               ? registries.withParent(JsonOps.INSTANCE) : JsonOps.INSTANCE;
+      }
+   };
+
 	@Override
 	protected void saveAdditional(ValueOutput output) {
 		super.saveAdditional(output);
 		output.putInt("JuiceTime", juiceTime);
 		output.putInt("JuiceTimeTotal", juiceTimeTotal);
 		output.store("Container", ItemStack.OPTIONAL_CODEC, containerStack);
-		output.storeNullable("CustomName", ComponentSerialization.CODEC, customName);
+		output.storeNullable("CustomName", CUSTOM_NAME_CODEC, customName);
 		output.putChild("Inventory", inventory);
 		ValueOutput recipes = output.child("RecipesUsed");
 		usedRecipeTracker.forEach((recipeId, craftedAmount) -> recipes.putInt(recipeId.identifier().toString(), craftedAmount));

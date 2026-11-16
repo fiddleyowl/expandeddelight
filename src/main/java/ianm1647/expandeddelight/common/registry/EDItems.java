@@ -188,7 +188,7 @@ public class EDItems {
         CINNAMON_PRESSURE_PLATE = registerWithTab("cinnamon_pressure_plate", properties -> new BlockItem(EDBlocks.CINNAMON_PRESSURE_PLATE.get(), properties.useBlockDescriptionPrefix()));
         CINNAMON_BUTTON = registerWithTab("cinnamon_button", properties -> new BlockItem(EDBlocks.CINNAMON_BUTTON.get(), properties.useBlockDescriptionPrefix()));
         CINNAMON_SIGN = registerWithTab("cinnamon_sign", properties -> new SignItem(EDBlocks.CINNAMON_SIGN.get(), EDBlocks.CINNAMON_WALL_SIGN.get(), properties.useBlockDescriptionPrefix()));
-        CINNAMON_HANGING_SIGN = registerWithTab("cinnamon_hanging_sign", properties -> new HangingSignItem(EDBlocks.CINNAMON_CEILING_HANGING_SIGN.get(), EDBlocks.CINNAMON_WALL_HANGING_SIGN.get(), properties.useBlockDescriptionPrefix()));
+        CINNAMON_HANGING_SIGN = registerWithTab("cinnamon_hanging_sign", properties -> new HangingSignItem(EDBlocks.CINNAMON_CEILING_HANGING_SIGN.get(), EDBlocks.CINNAMON_WALL_HANGING_SIGN.get(), properties.overrideDescription(EDBlocks.CINNAMON_CEILING_HANGING_SIGN.get().getDescriptionId())));
         CINNAMON_CABINET = registerWithTab("cinnamon_cabinet", properties -> new BlockItem(EDBlocks.CINNAMON_CABINET.get(), properties.useBlockDescriptionPrefix()));
         CINNAMON_BOAT = registerWithTab("cinnamon_boat", properties -> new BoatItem(EDEntityTypes.CINNAMON_BOAT.get(), properties.stacksTo(1)));
         CINNAMON_CHEST_BOAT = registerWithTab("cinnamon_chest_boat", properties -> new BoatItem(EDEntityTypes.CINNAMON_CHEST_BOAT.get(), properties.stacksTo(1)));
@@ -225,12 +225,12 @@ public class EDItems {
         GOAT_MILK_BUCKET = registerWithTab("goat_milk_bucket", properties -> new Item(properties.craftRemainder(Items.BUCKET).usingConvertsTo(Items.BUCKET).stacksTo(1).component(DataComponents.CONSUMABLE, Consumables.MILK_BUCKET)));
         GOAT_MILK_BOTTLE = registerWithTab("goat_milk_bottle", properties -> new MilkBottleItem(properties.component(DataComponents.CONSUMABLE, Consumables.DEFAULT_DRINK).craftRemainder(Items.GLASS_BOTTLE).usingConvertsTo(Items.GLASS_BOTTLE).stacksTo(16)));
 
-        ASPARAGUS_SEEDS = registerWithTab("asparagus_seeds", properties -> new BlockItem(EDBlocks.ASPARAGUS_CROP.get(), properties.useBlockDescriptionPrefix()));
+        ASPARAGUS_SEEDS = registerWithTab("asparagus_seeds", properties -> new BlockItem(EDBlocks.ASPARAGUS_CROP.get(), properties));
         ASPARAGUS = registerWithTab("asparagus", properties -> new Item(foodItem(properties, 2, 0.2f)));
-        SWEET_POTATO = registerWithTab("sweet_potato", properties -> new BlockItem(EDBlocks.SWEET_POTATO_CROP.get(), foodItem(properties, 2, 0.2f)));
-        CHILI_PEPPER_SEEDS = registerWithTab("chili_pepper_seeds", properties -> new BlockItem(EDBlocks.CHILI_PEPPER_CROP.get(), properties.useBlockDescriptionPrefix()));
+        SWEET_POTATO = registerWithTab("sweet_potato", properties -> new BlockItem(EDBlocks.SWEET_POTATO_CROP.get(), foodItem(properties, 2, 0.2f).overrideDescription(EDBlocks.SWEET_POTATO_CROP.get().getDescriptionId())));
+        CHILI_PEPPER_SEEDS = registerWithTab("chili_pepper_seeds", properties -> new BlockItem(EDBlocks.CHILI_PEPPER_CROP.get(), properties));
         CHILI_PEPPER = registerWithTab("chili_pepper", properties -> new Item(foodItem(properties, 2, 0.1f)));
-        PEANUT = registerWithTab("peanut", properties -> new BlockItem(EDBlocks.PEANUT_CROP.get(), foodItem(properties, 1, 0f)));
+        PEANUT = registerWithTab("peanut", properties -> new BlockItem(EDBlocks.PEANUT_CROP.get(), foodItem(properties, 1, 0f).overrideDescription(EDBlocks.PEANUT_CROP.get().getDescriptionId())));
         CRANBERRIES = registerWithTab("cranberries", properties -> new LilypadCropItem(EDBlocks.CRANBERRY_PLANT.get(), foodItem(properties, 2, 0.5f)));
 
         BAKED_SWEET_POTATO = registerWithTab("baked_sweet_potato", properties -> new Item(foodItem(properties, 6, 0.4f)));

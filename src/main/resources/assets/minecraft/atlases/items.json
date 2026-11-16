@@ -1,0 +1,11 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:filter",
+      "pattern": {
+        "namespace": "expandeddelight",
+        "path": "item/empty_container_slot_bottle"
+      }
+    }
+  ]
+}

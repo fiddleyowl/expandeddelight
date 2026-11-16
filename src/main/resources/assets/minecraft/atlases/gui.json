@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "expandeddelight:item/empty_container_slot_bottle",
+      "sprite": "expandeddelight:item/empty_container_slot_bottle"
+    }
+  ]
+}
