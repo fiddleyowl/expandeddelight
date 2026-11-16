@@ -7,7 +7,6 @@ Upstream branch: 1.21-neo
 Upstream version: 0.1.4 for Minecraft 1.21.1 / NeoForge
 Upstream baseline: ea826400654702587e86c9e94544bfd74f065083
 
-Minecraft 26.1.2 port maintainer: fiddleyowl
 Port repository: https://github.com/fiddleyowl/expandeddelight
 Port branch: 26.1.2-neoforge
 Port version: 0.1.4+mc26.1.2

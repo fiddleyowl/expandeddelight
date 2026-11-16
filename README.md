@@ -5,7 +5,6 @@ A Minecraft 26.1.2 / NeoForge port of Expanded Delight, a Farmer's Delight addon
 ## Authors and credits
 
 - **ianm1647** — original Expanded Delight code and assets. [GitHub](https://github.com/ianm1647/expandeddelight) · [CurseForge](https://www.curseforge.com/minecraft/mc-mods/expanded-delight).
-- **fiddleyowl** — maintains this [Minecraft 26.1.2 / NeoForge port](https://github.com/fiddleyowl/expandeddelight).
 - **vectorwing** — Farmer's Delight; **BuaichiZY** — its [26.1.2 port](https://github.com/BuaichiZY/FarmersDelight_26_Neo.ver/tree/26.1.2), whose recipe, recipe book, screen, and tooltip code this port adapts.
 
 ## Requirements
